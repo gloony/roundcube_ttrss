@@ -1,0 +1,12 @@
+#taskmenu a.ttrss:before{
+	content:"\f09e"}
+#taskmenu .button-ttrss[data-badge]:after {
+	margin-left:-5.2em;
+	margin-top:2em;
+	position:absolute;
+	font-size:.7em;
+	content:" [" attr(data-badge) "]";
+	color:#ffbd8c}
+@media screen and (min-width: 481px){
+	#taskmenu .button-ttrss.selected.button{
+		color:#ff6f00}}
