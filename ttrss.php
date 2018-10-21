@@ -11,23 +11,16 @@ class ttrss extends rcube_plugin
 	function init()
 	{
 		$this->rc = rcube::get_instance();
+		$this->load_ui();
+		$this->register_task('ttrss');
+		$this->add_hook('startup', array($this, 'startup'));
+		$this->register_action('index', array($this, 'action'));
 		if($this->rc->task == 'settings')
 		{
 			$this->add_hook('preferences_sections_list', array($this, 'ttrss_preferences_sections_list'));
 			$this->add_hook('preferences_list', array($this, 'ttrss_preferences_list'));
 			$this->add_hook('preferences_save', array($this, 'ttrss_preferences_save'));
 		}
-		$this->load_ui();
-		$this->register_task('ttrss');
-		$this->register_action('getunreaditems', array($this, 'getunreaditems'));
-		$this->register_action('getTree', array($this, 'getTree'));
-		$this->register_action('getFeeds', array($this, 'getFeeds'));
-		$this->register_action('getHeadlines', array($this, 'getHeadlines'));
-		$this->register_action('getArticle', array($this, 'getArticle'));
-		$this->register_action('getArticleAttachments', array($this, 'getArticleAttachments'));
-		$this->add_hook('startup', array($this, 'startup'));
-		$this->register_action('index', array($this, 'action'));
-		// $this->add_hook('session_destroy', array($this, 'logout'));
 	}
 	/**
 * Startup the application, adding the Task-button
@@ -35,19 +28,28 @@ class ttrss extends rcube_plugin
 	function startup()
 	{
 		$rcmail = rcmail::get_instance();
-		if(!$rcmail->output->framed && $this->rc->config->get('ttrss_username') !== null)
+		if($this->rc->config->get('ttrss_username') !== null && $this->rc->config->get('ttrss_username') !== '')
 		{
-			// add taskbar button
-			$this->add_button(array(
-				'command'    => 'ttrss',
-				'class'      => 'button-ttrss',
-				'classsel'   => 'button-ttrss button-selected',
-				'innerclass' => 'button-inner',
-				'label'      => 'ttrss.ttrss',
-				'type'       => 'link',
-			), 'taskbar');
-			$this->include_script('ttrss.js');
-			$this->include_stylesheet('ttrss.css');
+			$this->register_action('getunreaditems', array($this, 'getunreaditems'));
+			$this->register_action('getTree', array($this, 'getTree'));
+			$this->register_action('getFeeds', array($this, 'getFeeds'));
+			$this->register_action('getHeadlines', array($this, 'getHeadlines'));
+			$this->register_action('getArticle', array($this, 'getArticle'));
+			$this->register_action('getArticleAttachments', array($this, 'getArticleAttachments'));
+			if(!$rcmail->output->framed)
+			{
+				// add taskbar button
+				$this->add_button(array(
+					'command'    => 'ttrss',
+					'class'      => 'button-ttrss',
+					'classsel'   => 'button-ttrss button-selected',
+					'innerclass' => 'button-inner',
+					'label'      => 'ttrss.ttrss',
+					'type'       => 'link',
+				), 'taskbar');
+				$this->include_script('ttrss.js');
+				$this->include_stylesheet('ttrss.css');
+			}
 		}
 	}
 	/**
@@ -299,19 +301,6 @@ class ttrss extends rcube_plugin
 			$rcmail->output->add_handlers(array('ttrsscontent' => array($this, 'content')));
 			$rcmail->output->send('ttrss.ttrss');
 		}
-	}
-	/**
-* Called on logout from Roundcube.
-* Destroy the TTRSS-session
-*/
-	function logout($args)
-	{
-		$rcmail = rcmail::get_instance();
-		$dbh = new PDO($rcmail->config->get('ttrss_dbdriver', false).':dbname='.$rcmail->config->get('ttrss_dbname', false).';host='.$rcmail->config->get('ttrss_dbhost', false), $rcmail->config->get('ttrss_dbuser', false), $rcmail->config->get('ttrss_dbpass', false));
-		$stmt = $dbh->prepare("DELETE FROM sessions WHERE sess_ID=:id");
-		$stmt->bindParam(':id', $_COOKIE['ttrss_sess']);
-		$stmt->execute();
-		setcookie('ttrss_sess', '', time() - 3600);
 	}
 	/**
 * Display the content of the calender (calling TTRSS)

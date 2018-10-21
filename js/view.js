@@ -21,6 +21,8 @@ var trs = {
 			locStore.set('trs.last.headlines', id);
 		},
 		article: function(id, feed_ids){
+			$('#messagelist tbody tr.selected').removeClass('selected');
+			$('#trsHL' + id).addClass('selected');
 			$('#messagecontframe').attr('src', './?_task=ttrss&_action=getArticle&id=' + id);
 			$('#trsHL' + id).removeClass('unread');
 			$('#messagecontframe').on('load', function(){ trs.loadLastFeeds(); });
