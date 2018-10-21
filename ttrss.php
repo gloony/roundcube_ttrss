@@ -21,6 +21,11 @@ class ttrss extends rcube_plugin
 			$this->add_hook('preferences_list', array($this, 'ttrss_preferences_list'));
 			$this->add_hook('preferences_save', array($this, 'ttrss_preferences_save'));
 		}
+		elseif($this->rc->task == 'settings')
+		{
+			$skin_path = $this->local_skin_path();
+			$this->include_stylesheet($skin_path."/ttrss.css");
+		}
 	}
 	/**
 * Startup the application, adding the Task-button
@@ -405,8 +410,6 @@ class ttrss extends rcube_plugin
 	function load_ui()
 	{
 		$this->load_env();
-		$skin_path = $this->local_skin_path();
-		$this->include_stylesheet($skin_path."/ttrss.css");
 	}
 	/**
 * Encrypt a passwort (key: IMAP-password)
