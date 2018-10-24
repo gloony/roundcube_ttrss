@@ -5,13 +5,11 @@
 
 .message:hover #flagicnrcmrowOTE:before{
 	content: "\f005"}
-.messagelist td.flags>span.flag{
-	margin-left: 8px}
+.messagelist span.flagged:before{
+	content: "\f005"}
 
 .messagelist .message.unread td.subject span.msgicon.status:before{
 	color: #ffd452}
-.messagelist td.subject span.msgicon.submit.status:before{
-	color: #ff5252}
 
 #folderlist-content #countdown{
 	position:absolute;
