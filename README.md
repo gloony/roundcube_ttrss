@@ -7,9 +7,15 @@ nothing more :)
 **This plugins work only with RoundCube 1.4+ and with elastic skin**
 
 #ToDO
-At the moment, it work but not without bugs ...
-Added some functionalities to unread an item, make it favourite, labeled etc.
-And, indeed remove all the menu from the mail template ...
+> Make possibility to add Label.
+
+> Subscribe/Unsubscribe from feeds.
+
+> Counter of feeds items on the bottom of message-list.
+
+> Correct the bugs that when you select a feed it doesn't show the wanted (work actually fine with special only).
+
+> And indeed, remove old menu.
 
 # Screenshots
 ![roundcube_ttrss Mail](screenshots/Main.png)
