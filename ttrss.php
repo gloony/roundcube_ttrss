@@ -190,7 +190,18 @@ class ttrss extends rcube_plugin
 			echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty."><thead><tr><th id="rcmsubject" class="subject" style=""><a href="./#sort" class="sortcol" rel="subject" title="Sort by" tabindex="-1">Subject</a></th><th id="rcmfromto" class="fromto" rel="fromto" style=""><a href="./#sort" class="sortcol" rel="fromto" title="Sort by" tabindex="-1">From</a></th><th id="rcmdate" class="date" style=""><a href="./#sort" class="sortcol" rel="date" title="Sort by" tabindex="-1">Date</a></th><th id="rcmflag" class="flag" style=""><span class="flagged">Flagged</span></th><th id="rcmattachment" class="attachment" style=""><span class="attachment">Attachment</span></th></tr></thead>';
 			$callback = $ttrss->getHeadlines($_GET['id'], 50, 1, 'true', 'true', 'false', $view_mode);
 			foreach($callback['content'] as $item){
-				// var_dump($item);
+				if(!empty($item['labels'])){
+					$title = ''; $count = 0;
+					foreach($item['labels'] as $label){
+						if($title!=='') $title .= ' - ';
+						$title .= $label[1];
+						$color = $label[3];
+						$count++;
+					}
+					if($count>1) $attachment = 'attachments';
+					else $attachment = 'attachment';
+					$attachment = '<span class="'.$attachment.'" title="'.$title.'" style="color:'.$color.'"></span>';
+				}else $attachment = '&nbsp;';
 				$class = ''; $unread = '';
 				if($item['unread']>0){
 					$class .= ' unread';
@@ -208,7 +219,7 @@ class ttrss extends rcube_plugin
 			<td class="subject" tabindex="0">
 				<span class="fromto skip-on-drag">
 					<span class="adr">
-						<span title=".tree" class="rcmContactAddress">'.$item['feed_title'].'</span>
+						<span class="rcmContactAddress">'.$item['feed_title'].'</span>
 					</span>
 				</span>
 				<span class="date skip-on-drag">'.date('H:i:s d/m/Y', $item['updated']).'</span>
@@ -221,7 +232,7 @@ class ttrss extends rcube_plugin
 			</td>
 			<td class="flags">
 				<span class="flag"><span id="flagicnrcmrowOTE" class="'.$flag.'" onclick="ttrss.article.toggle.star(\''.$item['id'].'\'); return false;"></span></span>
-				<span class="attachment">&nbsp;</span>
+				<span class="attachment">'.$attachment.'</span>
 			</td>
 		</tr>';
 			}

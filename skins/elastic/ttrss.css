@@ -8,6 +8,11 @@
 .messagelist span.flagged:before{
 	content: "\f005"}
 
+.messagelist span.attachment span:before{
+	content: "\f02b"}
+.messagelist span.attachments span:before{
+	content: "\f02c"}
+
 .messagelist .message.unread td.subject span.msgicon.status:before{
 	color: #ffd452}
 
