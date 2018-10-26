@@ -37,6 +37,9 @@
 			<li role="menuitem">
 				<a href="#list-options" onclick="return rcmail.command('menu-open', 'messagelistmenu', this, event)" class="button settings active" id="listmenulink" title="Options" tabindex="0"><span class="inner">Options</span></a>
 			</li>
+			<li role="menuitem">
+				<a class="button icon toolbar-button refresh" title="Check for new messages" id="rcmbtn120" role="button" href="#" onclick="ttrss.refresh(); return false;" tabindex="0" aria-disabled="false"><span class="inner">Refresh</span></a>
+			</li>
 		</ul>
 	</div>
 	<div id="messagelist-content" class="scroller" tabindex="-1">
