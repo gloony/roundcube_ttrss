@@ -33,10 +33,13 @@ class ttrss extends rcube_plugin
 			$this->register_action('getunreaditems', array($this, 'getunreaditems'));
 			$this->register_action('getTree', array($this, 'getTree'));
 			$this->register_action('getFeeds', array($this, 'getFeeds'));
+			$this->register_action('getLabels', array($this, 'getLabels'));
 			$this->register_action('getHeadlines', array($this, 'getHeadlines'));
 			$this->register_action('getArticle', array($this, 'getArticle'));
 			$this->register_action('getArticleAttachments', array($this, 'getArticleAttachments'));
+			$this->register_action('getCounters', array($this, 'getCounters'));
 			$this->register_action('updateArticle', array($this, 'updateArticle'));
+			$this->register_action('setArticleLabel', array($this, 'setArticleLabel'));
 			if(!$rcmail->output->framed)
 			{
 				// add taskbar button
@@ -94,9 +97,6 @@ class ttrss extends rcube_plugin
 	{
 		$ttrss = $this->createAPI();
 		// $counters = $ttrss->getFeedTree();
-		$counters = $ttrss->getCounters('flc');
-		$counters = $counters['content'];
-		// var_dump($counters); exit();
 		if($ttrss!==false)
 		{
 			$callback = $ttrss->getCategories(false, true);
@@ -180,15 +180,41 @@ class ttrss extends rcube_plugin
 	/**
 * Echo the tree of folders and exit
 */
+	function getLabels()
+	{
+		$ttrss = $this->createAPI();
+		if($ttrss!==false)
+		{
+			// $callback = $ttrss->getFeeds(-2, false, 200, 0, true);
+			$callback = $ttrss->getLabels();
+			$items = $callback['content'];
+			$keys = array_column($items, 'title');
+			array_multisort($keys, SORT_ASC, $items);
+			foreach($items as $item){
+				if($item['id']==-2||$item['id']==0) continue;
+				echo '<li role="menuitem"><a class="expand all active" id="rcmbtn137" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="ttrss.article.toggle.label('.$item['id'].', '.$_GET['mode'].'); return false;" style="color:'.$item['bg_color'].'">'.$item['caption'].'</a></li>';
+			}
+		}
+		exit;
+	}
+	/**
+* Echo the tree of folders and exit
+*/
 	function getHeadlines()
 	{
 		$ttrss = $this->createAPI();
 		if($ttrss!==false)
 		{
+			$empty = true;
+			$limit = 50;
+			if(isset($_GET['offset'])){
+				$offset = ($_GET['offset'] * $limit) + 1;
+				$offset = $offset - 50;
+			}else $offset = 1;
 			if(isset($_GET['view_mode'])&&!empty($_GET['view_mode'])) $view_mode = $_GET['view_mode'];
 			else $view_mode = 'all_articles';
-			echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty."><thead><tr><th id="rcmsubject" class="subject" style=""><a href="./#sort" class="sortcol" rel="subject" title="Sort by" tabindex="-1">Subject</a></th><th id="rcmfromto" class="fromto" rel="fromto" style=""><a href="./#sort" class="sortcol" rel="fromto" title="Sort by" tabindex="-1">From</a></th><th id="rcmdate" class="date" style=""><a href="./#sort" class="sortcol" rel="date" title="Sort by" tabindex="-1">Date</a></th><th id="rcmflag" class="flag" style=""><span class="flagged">Flagged</span></th><th id="rcmattachment" class="attachment" style=""><span class="attachment">Attachment</span></th></tr></thead>';
-			$callback = $ttrss->getHeadlines($_GET['id'], 50, 1, 'true', 'true', 'false', $view_mode);
+			echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty.">';
+			$callback = $ttrss->getHeadlines($_GET['id'], $limit, $offset, 'true', 'true', 'false', $view_mode, false, 0, true, 'date_reverse');
 			foreach($callback['content'] as $item){
 				if(!empty($item['labels'])){
 					$title = ''; $count = 0;
@@ -198,8 +224,8 @@ class ttrss extends rcube_plugin
 						$color = $label[3];
 						$count++;
 					}
-					if($count>1) $attachment = 'attachments';
-					else $attachment = 'attachment';
+					if($count>1) $attachment = 'tags';
+					else $attachment = 'tag';
 					$attachment = '<span class="'.$attachment.'" title="'.$title.'" style="color:'.$color.'"></span>';
 				}else $attachment = '&nbsp;';
 				$class = ''; $unread = '';
@@ -212,6 +238,7 @@ class ttrss extends rcube_plugin
 				}else{
 					$flag = 'unflagged';
 				}
+				if($empty) $empty = false;
 				echo '		<tr id="trsHL'.$item['id'].'" class="message'.$class.'">
 			<td class="selection">
 				<input type="checkbox" tabindex="-1">
@@ -232,10 +259,11 @@ class ttrss extends rcube_plugin
 			</td>
 			<td class="flags">
 				<span class="flag"><span id="flagicnrcmrowOTE" class="'.$flag.'" onclick="ttrss.article.toggle.star(\''.$item['id'].'\'); return false;"></span></span>
-				<span class="attachment">'.$attachment.'</span>
+				<span class="attachment" onClick="rcmail.command(\'menu-open\', \'messagelistmenu\', this, event); ttrss.after.label.show(); return false;">'.$attachment.'</span>
 			</td>
 		</tr>';
 			}
+			if($empty) echo '<div class="listing-info">The list is empty.</div>';
 			echo '</table>';
 		}
 		exit;
@@ -304,6 +332,22 @@ class ttrss extends rcube_plugin
 		exit;
 	}
 	/**
+* Echo the tree of folders and exit
+*/
+	function getCounters()
+	{
+		$ttrss = $this->createAPI();
+		if($ttrss!==false)
+		{
+			$output_mode = '';
+			if(isset($_GET['output_mode'])) $output_mode = $_GET['output_mode'];
+			$counters = $ttrss->getCounters($output_mode);
+			$counters = $counters['content'];
+			var_dump($counters); exit();
+		}
+		exit;
+	}
+	/**
 * Update Article and exit
 */
 	function updateArticle()
@@ -314,6 +358,22 @@ class ttrss extends rcube_plugin
 			if(isset($_GET['mode'])) $mode = $_GET['mode'];
 			else $mode = 2;
 			$ttrss->updateArticle($_GET['id'], $mode, $_GET['field']);
+		}
+		exit;
+	}
+	/**
+* Update Article Label and exit
+*/
+	function setArticleLabel()
+	{
+		$ttrss = $this->createAPI();
+		if($ttrss!==false)
+		{
+			switch($_GET['mode']){
+				case 0: case '0': case false: $mode = false; break;
+				case 1: case '1': case true: default: $mode = true;
+			}
+			var_dump($ttrss->setArticleLabel($_GET['id_article'], $_GET['id_label'], $mode));
 		}
 		exit;
 	}

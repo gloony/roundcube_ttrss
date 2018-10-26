@@ -9,13 +9,11 @@ nothing more :)
 #ToDO
 > Make possibility to add Label.
 
-> Subscribe/Unsubscribe from feeds.
-
 > Counter of feeds items on the bottom of message-list.
 
 > Correct the bugs that when you select a feed it doesn't show the wanted (work actually fine with special only).
 
-> And indeed, remove old menu.
+> And indeed, remove old menu and optimize the code and display.
 
 # Screenshots
 ![roundcube_ttrss Mail](screenshots/Main.png)

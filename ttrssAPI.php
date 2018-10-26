@@ -164,9 +164,31 @@ class ttrssAPI
 		} else return false;
 	}
 
+	public function setArticleLabel( $article_ids, $label_id, $assign = true)
+	{
+		$params = array( "sid" => $this -> t_session_id, "op" => "setArticleLabel", "article_ids" => $article_ids, "label_id" => $label_id, "assign" => $assign);
+		$params = json_encode( $params);
+		$response = $this -> t_api_query( $this->t_api_url, $params);
+		if ( $response['code'] == 200) {
+			$tarray = json_decode( $response['text'], true);
+			return $tarray;
+		} else return false;
+	}
+
 	public function getUnread()
 	{
 		$params = array( "sid" => $this->t_session_id, "op" => "getUnread");
+		$params = json_encode( $params);
+		$response = $this -> t_api_query( $this->t_api_url, $params);
+		if ( $response['code'] == 200) {
+			$tarray = json_decode( $response['text'], true);
+			return $tarray;
+		} else return false;
+	}
+
+	public function getLabels( $article_id = true)
+	{
+		$params = array( "sid" => $this->t_session_id, "op" => "getLabels", "article_id" => $article_id);
 		$params = json_encode( $params);
 		$response = $this -> t_api_query( $this->t_api_url, $params);
 		if ( $response['code'] == 200) {

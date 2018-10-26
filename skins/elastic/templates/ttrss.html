@@ -8,7 +8,7 @@
 	<div class="header">
 		<a class="button icon back-list-button" href="#back"><span class="inner"><roundcube:label name="back" /></span></a>
 		<span class="header-title username"><roundcube:var name="env:ttrss_header_title" /></span>
-		<a title="Folder actions..." class="button icon sidebar-menu" data-popup="mailboxoptions-menu" id="rcmbtn109" role="button" href="#" aria-haspopup="true" aria-expanded="false" aria-owns="mailboxoptions-menu" data-original-title="Folder actions..." onClick="settings.init();"><span class="inner">Actions</span></a>
+		<a title="Folder actions..." class="button icon sidebar-menu" data-popup="mailboxoptions-menu" id="rcmbtn109" role="button" href="#" aria-haspopup="true" aria-expanded="false" aria-owns="mailboxoptions-menu" data-original-title="Folder actions..."><span class="inner">Actions</span></a>
 	</div>
 	<h2 id="aria-label-folderlist" class="voice"><roundcube:label name="arialabelfolderlist" /></h2>
 	<div id="folderlist-content" class="scroller">
@@ -21,25 +21,38 @@
 <!-- messages list -->
 <div class="list listbox selected">
 	<div id="messagelist-header" class="header">
-		<a class="button icon menu-button" href="#menu"><span class="inner"><roundcube:label name="menu" /></span></a>
-		<a class="button icon back-sidebar-button folders" href="#sidebar"><span class="inner"><roundcube:label name="mailboxlist" /></span></a>
+		<a class="button icon menu-button" href="#menu"><span class="inner">Menu</span></a>
+		<a class="button icon back-sidebar-button folders" href="#sidebar"><span class="inner">Folders</span></a>
 		<span class="header-title"></span>
-		<div class="toolbar" role="toolbar">
-			<a href="#select" class="button select active" data-popup="listselect-menu" data-toggle-button="list-toggle-button" title="<roundcube:label name="select" />"><span class="inner"><roundcube:label name="select" /></span></a>
-			<roundcube:if condition="env:threads" />
-				<a href="#threads" class="button threads active" data-popup="threadselect-menu" title="<roundcube:label name="threads" />"><span class="inner"><roundcube:label name="threads" /></span></a>
-			<roundcube:endif />
-			<roundcube:object name="listmenulink" class="button settings active" label="options" innerclass="inner" />
-			<roundcube:container name="listcontrols" id="listcontrols" />
-		</div>
-		<a class="button icon toolbar-menu-button" href="#list-menu"><span class="inner"><roundcube:label name="menu" /></span></a>
+		<ul class="toolbar listing iconized" id="toolbar-list-menu" aria-hidden="true">
+			<li role="menuitem">
+				<a href="#select" class="button select" data-popup="listselect-menu" data-toggle-button="list-toggle-button" title="Select" aria-haspopup="true" aria-expanded="false" aria-owns="listselect-menu" data-original-title="Select"><span class="inner">Select</span></a>
+			</li>
+			<li role="menuitem">
+				<a href="#" class="button threads" data-popup="threadselect-add" title="Add tags" aria-haspopup="true" aria-expanded="false" aria-owns="threadselect-menu" data-original-title="Add tags"><span class="inner">Add</span></a>
+			</li>
+			<li role="menuitem">
+				<a href="#" class="button threads" data-popup="threadselect-remove" title="Remove tags" aria-haspopup="true" aria-expanded="false" aria-owns="threadselect-menu" data-original-title="Remove tags"><span class="inner">Remove</span></a>
+			</li>
+			<li role="menuitem">
+				<a href="#list-options" onclick="return rcmail.command('menu-open', 'messagelistmenu', this, event)" class="button settings active" id="listmenulink" title="Options" tabindex="0"><span class="inner">Options</span></a>
+			</li>
+		</ul>
 	</div>
 	<div id="messagelist-content" class="scroller" tabindex="-1">
 		<h2 id="aria-label-messagelist" class="voice"><roundcube:label name="arialabelmessagelist" /></h2>
-		<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty."><thead><tr><th id="rcmsubject" class="subject" style=""><a href="./#sort" class="sortcol" rel="subject" title="Sort by" tabindex="-1">Subject</a></th><th id="rcmfromto" class="fromto" rel="fromto" style=""><a href="./#sort" class="sortcol" rel="fromto" title="Sort by" tabindex="-1">From</a></th><th id="rcmdate" class="date" style=""><a href="./#sort" class="sortcol" rel="date" title="Sort by" tabindex="-1">Date</a></th><th id="rcmflag" class="flag" style=""><span class="flagged">Flagged</span></th><th id="rcmattachment" class="attachment" style=""><span class="attachment">Attachment</span></th></tr></thead>
+		<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty.">
 			<tbody>
 			</tbody>
 		</table>
+	</div>
+	<div class="pagenav toolbar footer small" role="toolbar">
+<!-- 		<a class="button firstpage disabled" title="Show first set" id="rcmbtn124" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('firstpage','',this,event)"><span class="inner">First</span></a> -->
+		<a class="button prevpage disabled" title="Show previous set" id="rcmbtn125" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="ttrss.headlines.page.previous(); return false;"><span class="inner">Previous</span></a>
+		<span class="pagenav-text" aria-live="polite" aria-relevant="text" id="rcmcountdisplay"></span>
+		<input id="ttrssPageCounter" class="form-control rcpagejumper" type="text" size="3" disabled="" title="Current page" value="">
+		<a class="button nextpage disabled" title="Show next set" id="rcmbtn126" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="ttrss.headlines.page.next(); return false;"><span class="inner">Next</span></a>
+<!-- 		<a class="button lastpage disabled" title="Show last set" id="rcmbtn127" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('lastpage','',this,event)"><span class="inner">Last</span></a> -->
 	</div>
 </div>
 
@@ -71,12 +84,8 @@
 <div id="mailboxoptions-menu" class="popupmenu">
 	<h3 id="aria-label-mailboxoptions-menu" class="voice">Menu</h3>
 	<ul class="toolbarmenu listing" role="menu" aria-labelledby="aria-label-mailboxoptions-menu">
-		<li role="menuitem"><a class="" id="setclipboardmode-api" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="settings.change.clipboard('api'); return false;">api</a></li>
-		<li role="menuitem"><a class="" id="setclipboardmode-clipboardData" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="settings.change.clipboard('clipboardData'); return false;">clipboardData</a></li>
-		<li role="menuitem"><a class="" id="setclipboardmode-execCommand" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="settings.change.clipboard('execCommand'); return false;">execCommand</a></li>
-		<li role="menuitem"><a class="" id="setclipboardmode-prompt" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="settings.change.clipboard('prompt'); return false;">prompt</a></li>
-<!-- 		<li role="menuitem"><a class="" id="setnotemode-cm" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="settings.change.editor('codemirror'); return false;">CodeMirror</a></li>
-		<li role="menuitem"><a class="" id="setnotemode-mon" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="settings.change.editor('monaco'); return false;">Moncao</a></li> -->
+		<li role="menuitem"><a class="create active" id="subscribeFeed" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return false;">Subscribe Feed</a></li>
+		<li role="menuitem"><a class="delete active" id="subscribeFeed" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return false;">Subscribe Feed</a></li>
 	</ul>
 </div>
 
@@ -95,12 +104,14 @@
 	</ul>
 </div>
 
-<div id="threadselect-menu" class="popupmenu">
+<div id="threadselect-add" class="popupmenu">
 	<h3 id="aria-label-threadselectmenu" class="voice"><roundcube:label name="arialabelthreadselectmenu" /></h3>
 	<ul class="toolbarmenu listing" role="menu" aria-labelledby="aria-label-threadselectmenu">
-		<roundcube:button command="expand-all" type="link-menuitem" label="expand-all" class="expand all" classAct="expand all active" />
-		<roundcube:button command="expand-unread" type="link-menuitem" label="expand-unread" class="expand unread" classAct="expand unread active" />
-		<roundcube:button command="collapse-all" type="link-menuitem" label="collapse-all" class="expand none" classAct="expand none active" />
+	</ul>
+</div>
+<div id="threadselect-remove" class="popupmenu">
+	<h3 id="aria-label-threadselectmenu" class="voice"><roundcube:label name="arialabelthreadselectmenu" /></h3>
+	<ul class="toolbarmenu listing" role="menu" aria-labelledby="aria-label-threadselectmenu">
 	</ul>
 </div>
 

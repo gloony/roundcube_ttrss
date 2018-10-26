@@ -8,10 +8,15 @@
 .messagelist span.flagged:before{
 	content: "\f005"}
 
-.messagelist span.attachment span:before{
+.messagelist td.flags span.attachment span.tag:before{
 	content: "\f02b"}
-.messagelist span.attachments span:before{
+.messagelist td.flags span.attachment span.tags:before{
 	content: "\f02c"}
+
+.toolbar a.button.threads:before{
+	content: "\f02c"}
+.toolbarmenu li a.expand.all:before, .toolbarmenu li a.expand.unread:before, .toolbarmenu li a.expand.none:before{
+	content: "\f02b"}
 
 .messagelist .message.unread td.subject span.msgicon.status:before{
 	color: #ffd452}
