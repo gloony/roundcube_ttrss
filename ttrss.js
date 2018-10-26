@@ -48,6 +48,7 @@ function updateBadgeTTRSS(){
 					else document.title = firstTTRSSTitle;
 					if(data===null) faviconTTRSS.badge(0);
 					else faviconTTRSS.badge(data);
+					ttrss.loadLastFeeds();
 				}
 			}
 		},
