@@ -16,7 +16,7 @@ var faviconTTRSS = null;
 function updateBadgeTTRSS(){
 	$.ajax({
 		type: "POST",
-		url: "/?_task=ttrss&_action=getunreaditems",
+		url: "/?_task=ttrss&_action=getUnread",
 		data: "",
 		xhrFields: {
 			withCredentials: true
