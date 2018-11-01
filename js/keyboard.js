@@ -23,6 +23,10 @@ var keyboard = {
         }
       }else{
         switch(chCode){
+          case 33: ttrss.article.pageUp(); break //PageUP
+          case 34: ttrss.article.pageDown(); break; //PageDown
+          case 35: ttrss.article.last(); break; //end
+          case 36: ttrss.article.first(); break; //home
           case 37: ttrss.headlines.page.previous(); break; //left
           case 38: ttrss.article.previous(); break; //up
           case 39: ttrss.headlines.page.next(); break; //right

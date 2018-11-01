@@ -78,6 +78,7 @@ var ttrss = {
       ttrss.article.currentFeedID = feed_ids;
       $('#messagelist tbody tr.selected.expended.focused').removeClass('selected expended focused');
       $('#trsHL' + id).addClass('selected expended focused');
+      ttrss.scrollToElement(document.getElementById('trsHL' + id), document.getElementById('messagelist-content'));
       $('#messagecontframe').attr('src', './?_task=ttrss&_action=getArticle&id=' + id);
       $('#trsHL' + id).removeClass('unread');
       $('#messagecontframe').on('load', function(){ ttrss.loadLastFeeds(); });
@@ -161,22 +162,90 @@ var ttrss = {
     forward: function(){
       rcmail.goto_url('mail/compose', { _ttrss_feed: ttrss.article.currentID }, true);
     },
-    next: function(){
-      var id = $('#messagelist-content tr.selected').next('tr').attr('id');
-      if(id===undefined){
-        // ttrss.headlines.page.next();
-      }else{
+    first: function(){
+      var id = $('#messagelist-content tbody tr:first').attr('id');
+      if(id!==undefined){
         id = id.substring(5);
         ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
       }
     },
-    previous: function(){
-      var id = $('#messagelist-content tr.selected').prev('tr').attr('id');
-      if(id===undefined){
-        // ttrss.headlines.page.previous();
-      }else{
+    last: function(){
+      var id = $('#messagelist-content tbody tr:last').attr('id');
+      if(id!==undefined){
         id = id.substring(5);
         ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
+      }
+    },
+    next: function(){
+      var id = $('#messagelist-content tr.selected').attr('id');
+      if(id===undefined) id = $('#messagelist-content tbody tr:first').attr('id');
+      else id = $('#messagelist-content tr.selected').next('tr').attr('id');
+      if(id!==undefined){
+        id = id.substring(5);
+        ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
+      }else{
+        ttrss.headlines.page.next();
+      }
+    },
+    previous: function(){
+      var id = $('#messagelist-content tr.selected').attr('id');
+      if(id===undefined) id = $('#messagelist-content tbody tr:last').attr('id');
+      else id = $('#messagelist-content tr.selected').prev('tr').attr('id');
+      if(id!==undefined){
+        id = id.substring(5);
+        ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
+      }else{
+        ttrss.headlines.page.previous();
+      }
+    },
+    pageUp: function(){
+      var id = $('#messagelist-content tr.selected').attr('id');
+      if(id===undefined) id = $('#messagelist-content tbody tr:first').attr('id');
+      else{
+        var counter = 0;
+        id = $('#messagelist-content tr.selected');
+        while(id!==undefined&&counter<10){
+          id = $(id).prev('tr');
+          counter++;
+        }
+        id = $(id).attr('id');
+        if(id===undefined) id = $('#messagelist-content tbody tr:first').attr('id');
+      }
+      if(id!==undefined){
+        id = id.substring(5);
+        ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
+      }
+    },
+    pageDown: function(){
+      var id = $('#messagelist-content tr.selected').attr('id');
+      if(id===undefined) id = $('#messagelist-content tbody tr:last').attr('id');
+      else{
+        var counter = 0;
+        id = $('#messagelist-content tr.selected');
+        while(id!==undefined&&counter<10){
+          id = $(id).next('tr');
+          counter++;
+        }
+        id = $(id).attr('id');
+        if(id===undefined) id = $('#messagelist-content tbody tr:last').attr('id');
+      }
+      if(id!==undefined){
+        id = id.substring(5);
+        ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
+      }else{
+        ttrss.headlines.page.next();
+      }
+    }
+  },
+  scrollToElement: function(element, container){
+    if(element===undefined || element===null) return;
+    if(element.offsetTop < container.scrollTop){
+      container.scrollTop = element.offsetTop;
+    }else{
+      var offsetBottom = element.offsetTop + element.offsetHeight;
+      var scrollBottom = container.scrollTop + container.offsetHeight;
+      if(offsetBottom > scrollBottom){
+        container.scrollTop = offsetBottom - container.offsetHeight;
       }
     }
   }
