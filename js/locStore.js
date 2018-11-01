@@ -8,5 +8,9 @@ var locStore = {
 	set: function(name, value){
 		if(typeof localStorage!=='undefined') return localStorage.setItem(name, value);
 		else locStore.internalVar[name] = value;
-	}
+	},
+    unset: function(name){
+      if(typeof localStorage!=='undefined') localStorage.removeItem(name);
+      else delete myArray[name];
+    }
 };

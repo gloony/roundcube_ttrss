@@ -1,7 +1,7 @@
 <roundcube:add_label name="viewsource" />
 <div id="mailtoolbar" class="toolbar" role="toolbar">
   <roundcube:button command="forward" type="link"
-                    class="button forward" classAct="button forward"
+                    class="button forward disabled" classAct="button forward"
                     label="forward" title="forwardmessage" innerclass="inner" />
   <span class="spacer"></span>
   <roundcube:container name="toolbar" id="mailtoolbar" />
@@ -10,10 +10,10 @@ class="button markmessage" label="mark" title="markmessages"
 data-popup="markmessage-menu" innerclass="inner" /> -->
   <!--   <roundcube:button type="link" command="print" label="printmessage" class="button print" classAct="button print active" data-hidden="small"/> -->
   <!--   <roundcube:button type="link" command="download" label="export" class="button download" classAct="button download active" /> -->
-  <roundcube:button type="link" command="open" label="openinextwin" class="button extwin" classAct="button extwin active" data-hidden="small" />
+  <roundcube:button type="link" command="open" label="openinextwin" class="button extwin disabled" classAct="button extwin active" data-hidden="small" />
   <span class="spacer"></span>
-  <roundcube:button type="link" command="previousarticle" label="previous" class="button prevpage" classAct="button prevpage active" data-hidden="small" />
-  <roundcube:button type="link" command="nextarticle" label="next" class="button nextpage" classAct="button nextpage active" />
+  <roundcube:button type="link" command="previousarticle" label="previous" class="button prevpage disabled" classAct="button prevpage active" data-hidden="small" />
+  <roundcube:button type="link" command="nextarticle" label="next" class="button nextpage disabled" classAct="button nextpage active" data-hidden="small" />
 </div>
 
 <div id="forward-menu" class="popupmenu">

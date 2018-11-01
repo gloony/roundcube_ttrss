@@ -23,7 +23,9 @@ var keyboard = {
 				}
 			}else{
 				switch(chCode){
+					case 37: ttrss.headlines.page.previous(); break; //left
 					case 38: ttrss.article.previous(); break; //up
+					case 39: ttrss.headlines.page.next(); break; //right
 					case 40: ttrss.article.next(); break; //down
 					case 82: ttrss.refresh(); break; //r
 					default:

@@ -309,7 +309,7 @@ class ttrss extends rcube_plugin
     <link rel="stylesheet" href="plugins/ttrss/css/article.css?s=1535544692">
   </head>
   <body>
-    <h2><a id="rssHeadArticleLink" href="<?php echo $callback['content'][0]['link']; ?>" target="_BLANK"><?php echo $callback['content'][0]['title']; ?></a></h2>
+    <h2><a id="rssHeadArticleLink" href="<?php echo $callback['content'][0]['link']; ?>"><?php echo $callback['content'][0]['title']; ?></a></h2>
     <hr /><br />
     <?php echo $callback['content'][0]['content']; ?>
     <?php
