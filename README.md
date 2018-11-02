@@ -29,5 +29,5 @@ Localization to improve and some texts was never changed from the Mail template
 ```
 
 # Screenshots
-![roundcube_ttrss Mail](screenshots/Main.png)
+![roundcube_ttrss Main](screenshots/Main.png)
 ![roundcube_ttrss Settings](screenshots/Settings.png)
