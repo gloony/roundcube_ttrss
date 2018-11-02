@@ -32,6 +32,13 @@ var ttrss = {
   },
   after: {
     headlines: function(page){
+      if(ttrss.article.selectPending!==null){
+        switch(ttrss.article.selectPending){
+          case 'next': ttrss.article.first(); break;
+          case 'previous': ttrss.article.last(); break;
+        }
+        ttrss.article.selectPending = null;
+      }
       $('#trsHL' + ttrss.article.currentID).addClass('selected expended focused');
       if(page==1){
         rcmail.enable_command('firstpage', false);
@@ -131,6 +138,7 @@ var ttrss = {
   article: {
     currentID: null,
     currentFeedID: null,
+    selectPending: null,
     toggle: {
       read: function(id, mode){
         if(mode===undefined){
@@ -203,6 +211,7 @@ var ttrss = {
         id = id.substring(5);
         ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
       }else{
+        ttrss.article.selectPending = 'next';
         ttrss.headlines.page.next();
       }
     },
@@ -214,6 +223,7 @@ var ttrss = {
         id = id.substring(5);
         ttrss.load.article(id, locStore.get('ttrss.last.article.feed_ids'));
       }else{
+        ttrss.article.selectPending = 'previous';
         ttrss.headlines.page.previous();
       }
     },
