@@ -1,15 +1,32 @@
-# roundcube_ttrss
-Embed your ttrss account into your RoundCube (used the TTRSS API)
+# TTRSS on RoundCube
 
-Install into plugins directory, go to your settings into roundcube and set your parameters
-nothing more :)
+Embed your TTRSS account into your RoundCube (used the TTRSS API)
 
-**This plugins work only with RoundCube 1.4+ and with elastic skin**
+**This plugin work only with RoundCube 1.4+ and with elastic skin**
 
-#ToDO
-Optimizazion
-Let the possibilty to subscribe or unsubscribe to feeds
-Find a way to count all article by feed
+# Installation
+
+```
+You need a fully functional TTRSS server
+Install these content into your_roundcube_root/plugins/ttrss/
+Configure your config.inc.php to add this plugin
+Go to your settings into your RoundCube instance and add a server
+```
+
+# ToDO
+
+```
+Let the possibility to subscribe or unsubscribe to feeds
+Find a way to count all article by feed (and activate button last page)
+Optimization
+```
+
+# Bugs
+
+```
+Forward button doesn't display the content in HTML by default
+Localization to improve and some texts was never changed from the Mail template
+```
 
 # Screenshots
 ![roundcube_ttrss Mail](screenshots/Main.png)
