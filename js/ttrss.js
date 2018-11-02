@@ -14,8 +14,20 @@ var ttrss = {
       ttrss.load.headlines(-4);
     }
   },
+  loadExpendedFeed: function(){
+    if(locStore.get('ttrss.feed.expended')!==null){
+      var s = locStore.get('ttrss.feed.expended');
+      if(s.search(', ')!=-1){
+        var match = s.split(', ');
+        for(var a in match){
+          var id = match[a];
+          if(id!==null&&id!=='null'&&id!=='ttrss.feed.expended') ttrss.feed.collapse(id, true);
+        }
+      }else locStore.unset('ttrss.feed.expended');
+    }
+  },
   refreshLabels: function(){
-    $('#threadselect-add ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=true');
+    $('#threadselect-add ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=true', function(){ ttrss.after.labels(); });
     $('#threadselect-remove ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=false');
   },
   after: {
@@ -32,12 +44,12 @@ var ttrss = {
       var offset = (limit * page) + 1;
       offset = offset - 50;
       var counter = $('#messagelist tbody tr').length;
-      if(counter==0&&offset==1){
+      if(counter===0&&offset==1){
         $('.pagenav.toolbar .pagenav-text').html('Feeds is empty');
         rcmail.enable_command('firstpage', false);
-      }else if(counter!=0){
+      }else if(counter!==0){
         $('.pagenav.toolbar .pagenav-text').html(page + ' - ' + offset + ' of ' + (offset + counter - 1));
-      }else if(counter==0){
+      }else if(counter===0){
         $('.pagenav.toolbar .pagenav-text').html('');
         $('messagelist-header .toolbar.listing.iconized .button.select').removeClass('active');
       }else{
@@ -45,15 +57,22 @@ var ttrss = {
       }
       if(counter<50) rcmail.enable_command('nextpage', false);
       else rcmail.enable_command('nextpage', true);
+    },
+    labels: function(){
+      $('#threadselect-add ul.toolbarmenu li a').each(function(){
+        var id = $(this).attr('id');
+        id = id.substr(6);
+        document.styleSheets[0].addRule('#trsCAT' + id + ' a:before','color: ' + $('#trsLBL' + id).css('color') + ';');
+      });
     }
   },
   load: {
     folder: function(){
-      $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){  $('#trsCAT' + locStore.get('ttrss.last.headlines')).addClass('selected'); });
+      $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){ ttrss.loadExpendedFeed(); $('#trsCAT' + locStore.get('ttrss.last.headlines')).addClass('selected'); });
       locStore.unset('ttrss.last.feeds');
     },
     feeds: function(id){
-      $('#mailboxlist').load('./?_task=ttrss&_action=getFeeds&id=' + id, function(){  $('#trsCAT' + locStore.get('ttrss.last.headlines')).addClass('selected'); });
+      $('#mailboxlist').load('./?_task=ttrss&_action=getFeeds&id=' + id, function(){ $('#trsCAT' + locStore.get('ttrss.last.headlines')).addClass('selected'); });
       locStore.set('ttrss.last.feeds', id);
     },
     headlines: function(id, view_mode, offset){
@@ -237,6 +256,33 @@ var ttrss = {
       }
     }
   },
+  feed: {
+    collapse: function(id, force){
+      if(!isNaN(id)) return;
+      if($('#' + id + ' div.treetoggle')===undefined) return;
+      if(force===undefined) force = $('#' + id + ' div.treetoggle').hasClass('collapsed');
+      var cur = locStore.get('ttrss.feed.expended');
+      var find = id + ', ';
+      if(force){
+        $('#' + id + ' div.treetoggle').removeClass('collapsed');
+        $('#' + id + ' div.treetoggle').addClass('expanded');
+        $('#' + id + ' ul#sub' + id).removeClass('hidden');
+        $('#' + id).attr("aria-expanded", "true");
+        if(cur===null) cur = find;
+        else if(cur.search(find)==-1) cur += find;
+        if(locStore.get('ttrss.feed.expended')!=cur&&cur!==null) locStore.set('ttrss.feed.expended', cur);
+      }else{
+        $('#' + id + ' div.treetoggle').addClass('collapsed');
+        $('#' + id + ' div.treetoggle').removeClass('expanded');
+        $('#' + id + ' ul#sub' + id).addClass('hidden');
+        $('#' + id).attr("aria-expanded", "false");
+        var reg = new RegExp(find, 'g');
+        cur = cur.replace(reg, '');
+        if(cur==='') locStore.unset('ttrss.feed.expended');
+        else locStore.set('ttrss.feed.expended', cur);
+      }
+    }
+  },
   scrollToElement: function(element, container){
     if(element===undefined || element===null) return;
     if(element.offsetTop < container.scrollTop){
@@ -250,26 +296,3 @@ var ttrss = {
     }
   }
 };
-
-rcmail.addEventListener('init', function(evt) {
-  ttrss.refresh();
-  ttrss.refreshLabels();
-
-  rcmail.register_command('checkmail', ttrss.refresh, true);
-  rcmail.register_command('firstpage', ttrss.headlines.page.first, false);
-  rcmail.register_command('nextpage', ttrss.headlines.page.next, false);
-  rcmail.register_command('previouspage', ttrss.headlines.page.previous, false);
-  rcmail.register_command('nextarticle', ttrss.article.next, false);
-  rcmail.register_command('previousarticle', ttrss.article.previous, false);
-  rcmail.register_command('open', ttrss.article.open, false);
-  rcmail.register_command('forward', ttrss.article.forward, false);
-  rcmail.register_command('feed_subscribe', null, true);
-  rcmail.register_command('feed_unsubscribe', null, false);
-
-  // create custom button
-  // var button = $('<A>').attr('id', 'rcmSampleButton').html(rcmail.gettext('buttontitle', 'sampleplugin'));
-  // button.bind('click', function(e){ return rcmail.command('plugin.samplecmd', this); });
-  // add and register
-  // rcmail.add_element(button, 'toolbar');
-  // rcmail.register_button('plugin.samplecmd', 'rcmSampleButton', 'link');
-});

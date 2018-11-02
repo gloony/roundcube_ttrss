@@ -68,8 +68,9 @@ class ttrss extends rcube_plugin
       $header_title = $this->rc->config->get('ttrss_username').'@'.$url;
       $this->rcmail->output->set_env('ttrss_header_title', $header_title);
       $this->include_script('js/locStore.js');
-      $this->include_script('js/ttrss.js');
       $this->include_script('js/keyboard.js');
+      $this->include_script('js/ttrss.js');
+      $this->include_script('js/init.js');
       $skin_path = $this->local_skin_path();
       $this->include_stylesheet($skin_path."/ttrss.css");
       $this->rcmail->output->set_pagetitle($this->gettext('ttrss'));
@@ -122,35 +123,42 @@ class ttrss extends rcube_plugin
     {
       $callback = $ttrss->getCategories(false, true);
       $items = $callback['content'];
+      $keys = array_column($items, 'id');
+      array_multisort($keys, SORT_DESC, $items);
+      foreach($items as $item){
+        if($item['id']==-1||$item['id']==-2){
+          $class = 'mailbox'; $unread = '';
+          if($item['unread']>0){
+            $class .= ' unread';
+            $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
+          }
+          echo '      <li id="trsPrCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" role="treeitem" aria-level="1"><a onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
+        <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">&nbsp;</div>
+        <ul id="subtrsPrCAT'.$item['id'].'" class="hidden" role="group">';
+          $callback = $ttrss->getFeeds($item['id']);
+          $sitems = $callback['content'];
+          $keys = array_column($sitems, 'title');
+          array_multisort($keys, SORT_ASC, $sitems);
+          foreach($sitems as $sitem){
+            $class = 'mailbox'; $unread = '';
+            if($sitem['unread']>0){
+              $class .= ' unread';
+              $unread = '<span class="unreadcount">'.$sitem['unread'].'</span>';
+              $view_mode = 'unread';
+            }else{
+              $view_mode = 'all_articles';
+            }
+            if(substr($sitem['id'], 0, 3)==='-10') $class .= ' label';
+            echo '      <li id="trsCAT'.$sitem['id'].'" class="'.$class.'" role="treeitem" aria-level="2">
+        <a onclick="ttrss.load.headlines('.$sitem['id'].', \''.$view_mode.'\'); return false;">'.$sitem['title'].$unread.'</a>
+      </li>';
+            }
+			echo '        </ul>
+      </li>';
+        }
+      }
       $keys = array_column($items, 'title');
       array_multisort($keys, SORT_ASC, $items);
-      // var_dump($items);
-      foreach($items as $item){
-        if($item['id']==-1){
-          $class = 'mailbox'; $unread = '';
-          if($item['unread']>0){
-            $class .= ' unread';
-            $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
-          }
-          echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="1">
-        <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.feeds('.$item['id'].'); return false;">'.$item['title'].$unread.'</a>
-      </li>';
-          break;
-        }
-      }
-      foreach($items as $item){
-        if($item['id']==-2){
-          $class = 'mailbox'; $unread = '';
-          if($item['unread']>0){
-            $class .= ' unread';
-            $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
-          }
-          echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="1">
-        <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.feeds('.$item['id'].'); return false;">'.$item['title'].$unread.'</a>
-      </li>';
-          break;
-        }
-      }
       foreach($items as $item){
         if($item['id']!=-1&&$item['id']!=-2){
           $class = 'mailbox'; $unread = '';
@@ -179,7 +187,6 @@ class ttrss extends rcube_plugin
       $items = $callback['content'];
       $keys = array_column($items, 'title');
       array_multisort($keys, SORT_ASC, $items);
-      // var_dump($items);
       foreach($items as $item){
         if($item['id']==-2||$item['id']==0) continue;
         $class = 'mailbox'; $unread = '';
@@ -190,6 +197,7 @@ class ttrss extends rcube_plugin
         }else{
           $view_mode = 'all_articles';
         }
+        if(substr($item['id'], 0, 3)==='-10') $class .= ' label';
         echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="1">
         <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.headlines('.$item['id'].', \''.$view_mode.'\');return false;">'.$item['title'].$unread.'</a>
       </li>';
@@ -210,7 +218,7 @@ class ttrss extends rcube_plugin
       array_multisort($keys, SORT_ASC, $items);
       foreach($items as $item){
         if($item['id']==-2||$item['id']==0) continue;
-        echo '<li role="menuitem"><a class="expand all active" id="rcmbtn137" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="ttrss.article.toggle.label('.$item['id'].', '.$_GET['mode'].'); return false;" style="color:'.$item['bg_color'].'">'.$item['caption'].'</a></li>';
+        echo '<li role="menuitem"><a class="expand all active" id="trsLBL'.$item['id'].'" role="button" tabindex="-1" aria-disabled="true" onclick="ttrss.article.toggle.label('.$item['id'].', '.$_GET['mode'].'); return false;" style="color:'.$item['bg_color'].'">'.$item['caption'].'</a></li>';
       }
     }
     exit;
@@ -284,7 +292,7 @@ class ttrss extends rcube_plugin
       </td>
       <td class="flags">
         <span class="flag"><span id="flagicnrcmrowOTE" class="'.$flag.'" onclick="ttrss.article.toggle.star(\''.$item['id'].'\'); return false;"></span></span>
-        <span class="attachment" onClick="rcmail.command(\'menu-open\', \'messagelistmenu\', this, event); ttrss.after.label.show(); return false;">'.$attachment.'</span>
+        <span class="attachment">'.$attachment.'</span>
       </td>
     </tr>';
       }

@@ -29,6 +29,40 @@
   bottom:0;
   right:0}
 
+#trsPrCAT-1 a:before{
+  font-weight: 600;
+  content: "\f005"}
+
+#trsPrCAT-1 #trsCAT-1 a:before{
+  font-weight: 600;
+  content: "\f005"}
+#trsPrCAT-1 #trsCAT-2 a:before{
+  font-weight: 600;
+  content: "\f1e1"}
+
+
+#trsPrCAT-2 a:before{
+  font-weight: 600;
+  content: "\f02c"}
+
+#trsCAT-2 a:before{
+  font-weight: 600;
+  content: "\f02c"}
+#trsCAT-3 a:before{
+  font-weight: 600;
+  content: "\f070"}
+#trsCAT-4 a:before{
+  font-weight: 600;
+  content: "\f03a"}
+#trsCAT-6 a:before{
+  content: "\f06e"}
+#trsCAT0 a:before{
+  content: "\f187"}
+
+ul#mailboxlist li.label a:before{
+  font-weight: 600;
+  content: "\f02b"}
+
 #wdliFLDfull>a:before{
   content: "\f07b"}
 #wdliFLDempty>a:before{

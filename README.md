@@ -18,6 +18,8 @@ Go to your settings into your RoundCube instance and add a server
 ```
 Let the possibility to subscribe or unsubscribe to feeds
 Find a way to count all article by feed (and activate button last page)
+Make a folder list like the mail app for all nested category
+Make loading indication for pending action
 Optimization
 ```
 
