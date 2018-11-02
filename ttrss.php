@@ -118,7 +118,6 @@ class ttrss extends rcube_plugin
   function getTree()
   {
     $ttrss = $this->createAPI();
-    // $counters = $ttrss->getFeedTree();
     if($ttrss!==false)
     {
       $callback = $ttrss->getCategories(false, true);
@@ -420,19 +419,19 @@ class ttrss extends rcube_plugin
     $ttrss = $this->createAPI();
     if($ttrss!==false)
     {
-      $callback = $ttrss->getArticle($_GET['_ttrss_feed']);
-      // $callback['content'][0]['link']
-      // $args['attachments'][] = array(
-      // 	'name'     => $name.".".$type,
-      // 	'mimetype' => $mimetype,
-      // 	'data'     => $note_content,
-      // 	'size'     => filesize($note_file),
-      // );
-      $args['param']['body'] = '<div class="pre">';
-      $args['param']['body'] .= '<a href="'.$callback['content'][0]['link'].'">'.$callback['content'][0]['title']."</a><br />\n<hr /><br />\n";
-      $args['param']['body'] .= $callback['content'][0]['content'];
-      $args['param']['body'] .= '</div>';
-      $args['param']['subject'] = $callback['content'][0]['title'];
+      if(isset($args['param']['ttrss_feed'])){
+        $callback = $ttrss->getArticle($args['param']['ttrss_feed']);
+        // $args['attachments'][] = array(
+        // 	'name'     => $name.".".$type,
+        // 	'mimetype' => $mimetype,
+        // 	'data'     => $note_content,
+        // 	'size'     => filesize($note_file),
+        // );
+    	$args['param']['html'] = true;
+        $args['param']['body'] .= '<a href="'.$callback['content'][0]['link'].'">'.$callback['content'][0]['title']."</a><hr />\n";
+        $args['param']['body'] .= $callback['content'][0]['content'];
+        $args['param']['subject'] = $callback['content'][0]['title'];
+      }
     }
     return $args;
   }
