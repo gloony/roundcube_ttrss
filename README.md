@@ -13,7 +13,7 @@ Configure your config.inc.php to add this plugin
 Go to your settings into your RoundCube instance and add a server
 ```
 
-# ToDO
+# ToDo
 
 ```
 Let the possibility to subscribe or unsubscribe to feeds
