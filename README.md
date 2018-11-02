@@ -26,7 +26,6 @@ Optimization
 # Bugs
 
 ```
-Forward button doesn't display the content in HTML by default
 Localization to improve and some texts was never changed from the Mail template
 ```
 
