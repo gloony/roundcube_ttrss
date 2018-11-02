@@ -300,6 +300,9 @@ class ttrss extends rcube_plugin
     if($ttrss!==false)
     {
       $callback = $ttrss->getArticle($_GET['id']);
+      $target = '';
+      if(!$this->allowFrame($callback['content'][0]['link'])) $target = ' target="_BLANK"';
+      if(substr($callback['content'][0]['link'], 0, strlen('http://'))=='http://') $target = ' target="_BLANK"';
       // var_dump($callback);
 ?><!DOCTYPE html>
 <html lang="en">
@@ -309,7 +312,7 @@ class ttrss extends rcube_plugin
     <link rel="stylesheet" href="plugins/ttrss/css/article.css?s=1535544692">
   </head>
   <body>
-    <h2><a id="rssHeadArticleLink" href="<?php echo $callback['content'][0]['link']; ?>"><?php echo $callback['content'][0]['title']; ?></a></h2>
+    <h2><a id="rssHeadArticleLink" href="<?php echo $callback['content'][0]['link']; ?>" <?php echo $target; ?>><?php echo $callback['content'][0]['title']; ?></a></h2>
     <hr /><br />
     <?php echo $callback['content'][0]['content']; ?>
     <?php
@@ -495,5 +498,12 @@ class ttrss extends rcube_plugin
     $clear = $this->rcmail->decrypt($passwd, 'ttrss_des_key');
     $deskey_backup = $this->rcmail->config->set('ttrss_des_key', '');
     return $clear;
+  }
+
+  public function allowFrame($url){
+    $header = @get_headers($url, 1);
+    if(!$header||stripos($header[0], '200 ok')===false) return false;
+    elseif (isset($header['X-Frame-Options'])&&(stripos($header['X-Frame-Options'], 'SAMEORIGIN')!==false||stripos($header['X-Frame-Options'], 'deny')!==false)) return false;
+    else return true;
   }
 }
