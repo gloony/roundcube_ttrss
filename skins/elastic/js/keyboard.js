@@ -23,6 +23,8 @@ var keyboard = {
         }
       }else{
         switch(chCode){
+          case 27: ttrss.article.toggle.fullscreen(false); break;
+          case 32: ttrss.article.toggle.fullscreen(); break;
           case 33: ttrss.article.pageUp(); break //PageUP
           case 34: ttrss.article.pageDown(); break; //PageDown
           case 35: ttrss.article.last(); break; //end

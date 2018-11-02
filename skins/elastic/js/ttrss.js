@@ -140,6 +140,11 @@ var ttrss = {
     currentFeedID: null,
     selectPending: null,
     toggle: {
+      fullscreen: function(force){
+        if(force===undefined) force = !($('body>#layout>div.content .iframe-wrapper').css('position')=='fixed');
+        if(force) $('body>#layout>div.content .iframe-wrapper').css('position', 'fixed');
+        else $('body>#layout>div.content .iframe-wrapper').css('position', 'initial');
+      },
       read: function(id, mode){
         if(mode===undefined){
           mode = '';

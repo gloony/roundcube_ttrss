@@ -20,6 +20,9 @@ Let the possibility to subscribe or unsubscribe to feeds
 Find a way to count all article by feed (and activate button last page)
 Make a folder list like the mail app for all nested category
 Make loading indication for pending action
+Multiselection for read, star or tag articles
+Make timer for count unread items better
+More options (read on view, auto refresh timer)
 Optimization
 ```
 

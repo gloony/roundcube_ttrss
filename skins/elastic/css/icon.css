@@ -1,0 +1,21 @@
+#taskmenu a.ttrss:before{
+  content:"\f09e"}
+@media screen and (min-width: 481px){
+  #taskmenu .button-ttrss.selected.button{
+    color:#ff6f00}
+  #taskmenu .button-ttrss[data-badge]:after {
+    margin-left: -5.2em;
+    margin-top: 2em;
+    position: absolute;
+    font-size: .7em;
+    content: attr(data-badge);
+    background-color: #ff6f00;
+    color: white;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis}}
+.listing.iconized tr.ttrss>td.section:before{
+  content: "\f09e"}

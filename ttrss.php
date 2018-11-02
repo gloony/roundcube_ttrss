@@ -51,8 +51,9 @@ class ttrss extends rcube_plugin
           'label'      => 'ttrss.ttrss',
           'type'       => 'link',
         ), 'taskbar');
-        $this->include_script('ttrss.js');
-        $this->include_stylesheet('ttrss.css');
+        $skin_path = $this->local_skin_path();
+        $this->include_script($skin_path.'/js/badge.js');
+        $this->include_stylesheet($skin_path.'/css/icon.css');
       }
     }
   }
@@ -67,12 +68,12 @@ class ttrss extends rcube_plugin
       $url = substr($url, 0, strlen($url) - 1);
       $header_title = $this->rc->config->get('ttrss_username').'@'.$url;
       $this->rcmail->output->set_env('ttrss_header_title', $header_title);
-      $this->include_script('js/locStore.js');
-      $this->include_script('js/keyboard.js');
-      $this->include_script('js/ttrss.js');
-      $this->include_script('js/init.js');
       $skin_path = $this->local_skin_path();
-      $this->include_stylesheet($skin_path."/ttrss.css");
+      $this->include_script($skin_path.'/js/locStore.js');
+      $this->include_script($skin_path.'/js/keyboard.js');
+      $this->include_script($skin_path.'/js/ttrss.js');
+      $this->include_script($skin_path.'/js/init.js');
+      $this->include_stylesheet($skin_path."/css/app.css");
       $this->rcmail->output->set_pagetitle($this->gettext('ttrss'));
       $this->rcmail->output->add_handlers(array('ttrsscontent' => array($this, 'content')));
       $this->rcmail->output->send('ttrss.ttrss');

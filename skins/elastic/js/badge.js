@@ -31,7 +31,7 @@ function updateBadgeTTRSS(){
         if(localStorage.ttrss_unreads<data){
           localStorage.setItem('ttrss_unreads', data);
           var title = 'gNews';
-          var icon = 'https://public.gloony.me/gloony/ico/gNews.png';
+          var icon = 'plugins/ttrss/skins/elastic/asset/logo.png';
           var body = 'You have ' + data;
           if(data>1) body += ' unread articles';
           else body += ' unread article';

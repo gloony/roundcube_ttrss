@@ -6,6 +6,14 @@
 .toolbar a.button.extwin:before{
   content: "\f360"}
 
+body>#layout>div.content .iframe-wrapper{
+  /* position: fixed; */
+  background-color: #FFFFFF;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0}
+
 .message:hover #flagicnrcmrowOTE:before{
   content: "\f005"}
 .messagelist span.flagged:before{
