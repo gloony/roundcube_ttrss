@@ -31,6 +31,19 @@ Optimization
 
 ```
 Localization to improve and some texts was never changed from the Mail template
+Sorting feed and category not work correctly
+```
+
+# Limitations
+
+```
+Due to API limitation, is not possible to : 
+> Cannot create, rename or delete Label
+> Cannot create, rename or delete category
+> Cannot move Feed to another category
+> Cannot change order id of feed (for this reason, I choose to sort by alphabetic order)
+
+So for all these actions, your need to log in into your TTRSS instance and while the API doesn't change, I cannot make an update for that
 ```
 
 # Screenshots

@@ -37,6 +37,10 @@ body>#layout>div.content .iframe-wrapper{
   bottom:0;
   right:0}
 
+.folderlist li.feed a:before{
+  font-weight: 600;
+  content: "\f09e"}
+
 #trsPrCAT-1 a:before{
   font-weight: 600;
   content: "\f005"}

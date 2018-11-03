@@ -233,7 +233,7 @@ class ttrss extends rcube_plugin
 '.$indent.'      </li>
 ';
         }else{
-          if(substr($item['id'], 0, 3)==='-10') $class .= ' label';
+          $class .= ' feed';
           echo $indent.'          <li id="'.$subtxt.'trsFD'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="'.$level.'">
 '.$indent.'            <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.headlines('.$item['id'].', \''.$view_mode.'\', 1, \'false\', \''.$subtxt.'trsFD'.$item['id'].'\');return false;">'.$item['title'].$unread.'</a>
 '.$indent.'          </li>
