@@ -5,6 +5,7 @@ class ttrss extends rcube_plugin
   public $rc;
   public $rcmail;
   public $ui;
+  private $pagesize = 50;
 
   function init()
   {
@@ -30,9 +31,10 @@ class ttrss extends rcube_plugin
   {
     if($this->rc->config->get('ttrss_username') !== null && $this->rc->config->get('ttrss_username') !== '')
     {
+      if($this->rc->config->get('ttrss_pagesize') !== null) $this->pagesize = $this->rc->config->get('ttrss_pagesize');
       $this->register_action('getUnread', array($this, 'getUnread'));
       $this->register_action('getTree', array($this, 'getTree'));
-      $this->register_action('getFeeds', array($this, 'getFeeds'));
+      // $this->register_action('getFeeds', array($this, 'getFeeds'));
       $this->register_action('getLabels', array($this, 'getLabels'));
       $this->register_action('getHeadlines', array($this, 'getHeadlines'));
       $this->register_action('getArticle', array($this, 'getArticle'));
@@ -68,6 +70,7 @@ class ttrss extends rcube_plugin
       $url = substr($url, 0, strlen($url) - 1);
       $header_title = $this->rc->config->get('ttrss_username').'@'.$url;
       $this->rcmail->output->set_env('ttrss_header_title', $header_title);
+      $this->rcmail->output->set_env('ttrss_pagesize', $this->pagesize);
       $skin_path = $this->local_skin_path();
       $this->include_script($skin_path.'/js/locStore.js');
       $this->include_script($skin_path.'/js/keyboard.js');
@@ -134,27 +137,28 @@ class ttrss extends rcube_plugin
           }
           echo '      <li id="trsPrCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" role="treeitem" aria-level="1"><a onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
         <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">&nbsp;</div>
-        <ul id="subtrsPrCAT'.$item['id'].'" class="hidden" role="group">';
+        <ul id="subtrsPrCAT'.$item['id'].'" class="hidden" role="group">
+';
           $callback = $ttrss->getFeeds($item['id']);
           $sitems = $callback['content'];
           $keys = array_column($sitems, 'title');
           array_multisort($keys, SORT_ASC, $sitems);
+          $view_mode = 'all_articles';
           foreach($sitems as $sitem){
             $class = 'mailbox'; $unread = '';
             if($sitem['unread']>0){
               $class .= ' unread';
               $unread = '<span class="unreadcount">'.$sitem['unread'].'</span>';
-              $view_mode = 'unread';
-            }else{
-              $view_mode = 'all_articles';
+              // $view_mode = 'unread';
             }
             if(substr($sitem['id'], 0, 3)==='-10') $class .= ' label';
-            echo '      <li id="trsCAT'.$sitem['id'].'" class="'.$class.'" role="treeitem" aria-level="2">
-        <a onclick="ttrss.load.headlines('.$sitem['id'].', \''.$view_mode.'\'); return false;">'.$sitem['title'].$unread.'</a>
-      </li>';
+            echo '          <li id="trsCAT'.$sitem['id'].'" class="'.$class.'" role="treeitem" aria-level="2">
+            <a onclick="ttrss.load.headlines('.$sitem['id'].', \''.$view_mode.'\', 1, \'true\', \'trsCAT'.$sitem['id'].'\'); return false;">'.$sitem['title'].$unread.'</a>
+          </li>';
             }
-			echo '        </ul>
-      </li>';
+          echo '        </ul>
+      </li>
+';
         }
       }
       $keys = array_column($items, 'title');
@@ -166,44 +170,67 @@ class ttrss extends rcube_plugin
             $class .= ' unread';
             $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
           }
-          echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="1">
-        <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.headlines('.$item['id'].'); return false;">'.$item['title'].$unread.'</a>
-      </li>';
+          echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" role="treeitem" aria-level="1"><a onclick="ttrss.load.headlines('.$item['id'].', \''.$view_mode.'\', 1, \'true\', \'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
+        <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
+        <ul id="subtrsCAT'.$item['id'].'" class="hidden" role="group">';
+          $this->getFeeds($item['id']);
+          echo '        </ul>
+      </li>
+';
         }
       }
     }
     exit;
   }
 
-  function getFeeds()
+  private function getFeeds($id = null, $level = 2)
   {
     $ttrss = $this->createAPI();
     if($ttrss!==false)
     {
-      $callback = $ttrss->getFeeds($_GET['id'], false, 200, 0, true);
-      echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="1">
-        <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.folder(); return false;">..</a>
-      </li>';
+      if($id===null) $id = $_GET['id'];
+      $callback = $ttrss->getFeeds($id);
       $items = $callback['content'];
       $keys = array_column($items, 'title');
       array_multisort($keys, SORT_ASC, $items);
+      usort($items, function ($a, $b){
+        return (int)!array_key_exists('is_cat', $a);
+      });
       foreach($items as $item){
         if($item['id']==-2||$item['id']==0) continue;
         $class = 'mailbox'; $unread = '';
+        $view_mode = 'all_articles';
         if($item['unread']>0){
           $class .= ' unread';
           $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
-          $view_mode = 'unread';
-        }else{
-          $view_mode = 'all_articles';
+          // $view_mode = 'unread';
         }
-        if(substr($item['id'], 0, 3)==='-10') $class .= ' label';
-        echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="1">
-        <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.headlines('.$item['id'].', \''.$view_mode.'\');return false;">'.$item['title'].$unread.'</a>
-      </li>';
+        $indent = '';
+        $subtxt = 'sub';
+        if($level>2){
+          for($i = 2; $i <= $level; $i++){
+            $indent .= '  ';
+            $subtxt .= 'sub';
+          }
+        }
+        if(isset($item['is_cat'])&&$item['is_cat']){
+          echo $indent.'        <li id="'.$subtxt.'trsCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" role="treeitem" aria-level="1"><a onclick="ttrss.load.headlines('.$item['id'].', \'\', 1, \'true\', \''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
+'.$indent.'          <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
+'.$indent.'          <ul id="'.$subtxt.'subtrsCAT'.$item['id'].'" class="hidden" role="group">';
+          $this->getFeeds($item['id'], $level + 1);
+          echo $indent.'          </ul>
+'.$indent.'      </li>
+';
+        }else{
+          if(substr($item['id'], 0, 3)==='-10') $class .= ' label';
+          echo $indent.'          <li id="'.$subtxt.'trsFD'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="'.$level.'">
+'.$indent.'            <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.headlines('.$item['id'].', \''.$view_mode.'\', 1, \'false\', \''.$subtxt.'trsFD'.$item['id'].'\');return false;">'.$item['title'].$unread.'</a>
+'.$indent.'          </li>
+';
+        }
       }
     }
-    exit;
+    if(isset($_GET['id'])) exit;
   }
 
   function getLabels()
@@ -230,15 +257,17 @@ class ttrss extends rcube_plugin
     if($ttrss!==false)
     {
       $empty = true;
-      $limit = 50;
+      $limit = $this->pagesize;
       if(isset($_GET['offset'])){
         $offset = ($_GET['offset'] * $limit) + 1;
-        $offset = $offset - 50;
+        $offset = $offset - $this->pagesize;
       }else $offset = 1;
+      if(isset($_GET['is_cat'])) $is_cat = $_GET['is_cat'];
+      else $is_cat = true;
       if(isset($_GET['view_mode'])&&!empty($_GET['view_mode'])) $view_mode = $_GET['view_mode'];
       else $view_mode = 'all_articles';
       echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty.">';
-      $callback = $ttrss->getHeadlines($_GET['id'], $limit, $offset, 'true', 'true', 'false', $view_mode, false, 0, true, 'date_reverse');
+      $callback = $ttrss->getHeadlines($_GET['id'], $limit, $offset, $is_cat, 'true', 'false', $view_mode, false, 0, true, 'date_reverse');
       foreach($callback['content'] as $item){
         if(!empty($item['labels'])){
           $title = ''; $count = 0;
@@ -453,14 +482,17 @@ class ttrss extends rcube_plugin
     $urlV = rcube_utils::get_input_value('ttrss_url', rcube_utils::INPUT_POST);
     $usernameV = rcube_utils::get_input_value('ttrss_username', rcube_utils::INPUT_POST);
     $passwdV = rcube_utils::get_input_value('ttrss_passwd', rcube_utils::INPUT_POST);
+    $pagesizeV = rcube_utils::get_input_value('ttrss_pagesize', rcube_utils::INPUT_POST);
     $url = new html_inputfield(array('name' => 'ttrss_url', 'type' => 'text', 'autocomplete' => 'off', 'value' => $urlV != '' ? $urlV : $this->rc->config->get('ttrss_url'), 'size' => 255));
     $username = new html_inputfield(array('name' => 'ttrss_username', 'type' => 'text', 'autocomplete' => 'off', 'value' => $usernameV != '' ? $usernameV : $this->rc->config->get('ttrss_username'), 'size' => 255));
     $passwd = new html_inputfield(array('name' => 'ttrss_passwd', 'type' => 'password', 'autocomplete' => 'off', 'value' => '', 'size' => 255));
+    $pagesize = new html_inputfield(array('name' => 'ttrss_pagesize', 'type' => 'text', 'autocomplete' => 'off', 'value' => $pagesizeV != '' ? $pagesizeV : $this->rc->config->get('ttrss_pagesize'), 'size' => 255));
     $p['blocks']['ttrss_preferences_section'] = array(
       'options' => array(
         array('title'=> rcube::Q($this->gettext('url')), 'content' => $url->show()),
         array('title'=> rcube::Q($this->gettext('username')), 'content' => $username->show()),
         array('title'=> rcube::Q($this->gettext('password')), 'content' => $passwd->show()),
+        array('title'=> rcube::Q($this->gettext('pagesize')), 'content' => $pagesize->show()),
       ),
       'name' => rcube::Q($this->gettext('ttrss_settings'))
     );
@@ -476,10 +508,12 @@ class ttrss extends rcube_plugin
       $username = rcube_utils::get_input_value('ttrss_username', rcube_utils::INPUT_POST);
       $passwd = rcube_utils::get_input_value('ttrss_passwd', rcube_utils::INPUT_POST);
       if($passwd == '') $passwd = $this->decrypt($this->rc->config->get('ttrss_passwd'));
+      $ttrss_pagesize = rcube_utils::get_input_value('ttrss_pagesize', rcube_utils::INPUT_POST);
       $p['prefs'] = array(
         'ttrss_url'  => $url,
         'ttrss_username'  => $username,
         'ttrss_passwd'    => $this->encrypt($passwd),
+        'ttrss_pagesize'    => $ttrss_pagesize,
       );
     }
     return $p;

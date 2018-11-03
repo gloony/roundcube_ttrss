@@ -4,14 +4,13 @@ var ttrss = {
     ttrss.loadLastHeadlines();
   },
   loadLastFeeds: function(){
-    if(locStore.get('ttrss.last.feeds')!==null) ttrss.load.feeds(locStore.get('ttrss.last.feeds'));
-    else ttrss.load.folder();
+    ttrss.load.folder();
   },
   loadLastHeadlines: function(){
     if(locStore.get('ttrss.last.headlines')!==null){
-      ttrss.load.headlines(locStore.get('ttrss.last.headlines'), locStore.get('ttrss.last.headlines.view_mode'), locStore.get('ttrss.last.headlines.offset'));
+      ttrss.load.headlines(locStore.get('ttrss.last.headlines'), locStore.get('ttrss.last.headlines.view_mode'), locStore.get('ttrss.last.headlines.offset'), locStore.get('ttrss.last.headlines.el'));
     }else{
-      ttrss.load.headlines(-4);
+      ttrss.load.headlines(-4, '', 1, '#trsCAT-4');
     }
   },
   loadExpendedFeed: function(){
@@ -47,9 +46,10 @@ var ttrss = {
         rcmail.enable_command('firstpage', true);
         rcmail.enable_command('previouspage', true);
       }
-      var limit = 50;
+      var userlimit = rcmail.env.ttrss_pagesize;
+      var limit = userlimit;
       var offset = (limit * page) + 1;
-      offset = offset - 50;
+      offset = offset - userlimit;
       var counter = $('#messagelist tbody tr').length;
       if(counter===0&&offset==1){
         $('.pagenav.toolbar .pagenav-text').html('Feeds is empty');
@@ -62,7 +62,7 @@ var ttrss = {
       }else{
         $('.pagenav.toolbar .pagenav-text').html('');
       }
-      if(counter<50) rcmail.enable_command('nextpage', false);
+      if(counter<userlimit) rcmail.enable_command('nextpage', false);
       else rcmail.enable_command('nextpage', true);
     },
     labels: function(){
@@ -75,25 +75,25 @@ var ttrss = {
   },
   load: {
     folder: function(){
-      $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){ ttrss.loadExpendedFeed(); $('#trsCAT' + locStore.get('ttrss.last.headlines')).addClass('selected'); });
+      $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){ ttrss.loadExpendedFeed(); $(locStore.get('ttrss.last.headlines.el')).addClass('selected'); });
       locStore.unset('ttrss.last.feeds');
     },
-    feeds: function(id){
-      $('#mailboxlist').load('./?_task=ttrss&_action=getFeeds&id=' + id, function(){ $('#trsCAT' + locStore.get('ttrss.last.headlines')).addClass('selected'); });
-      locStore.set('ttrss.last.feeds', id);
-    },
-    headlines: function(id, view_mode, offset){
+    headlines: function(id, view_mode, offset, is_cat, el){
+      if(is_cat===undefined) is_cat = 'true';
       if(offset===undefined||offset===null||isNaN(offset)) offset = 1;
       ttrss.currentPage = offset;
       if(view_mode===undefined||view_mode===null) view_mode = '';
       $('.pagenav.toolbar .pagenav-text').html('Loading');
       $('#messagelist-content').html('');
-      $('#messagelist-content').load('./?_task=ttrss&_action=getHeadlines&id=' + id + '&view_mode=' + view_mode + '&offset=' + offset, function(){ ttrss.after.headlines(offset); });
+      $('#messagelist-content').load('./?_task=ttrss&_action=getHeadlines&id=' + id + '&view_mode=' + view_mode + '&offset=' + offset + '&is_cat=' + is_cat, function(){ ttrss.after.headlines(offset); });
       locStore.set('ttrss.last.headlines', id);
       locStore.set('ttrss.last.headlines.view_mode', view_mode);
       locStore.set('ttrss.last.headlines.offset', offset);
       $('#mailboxlist .selected').removeClass('selected');
-      $('#trsCAT' + id).addClass('selected');
+      if(el!==undefined&&el!==null){
+        locStore.set('ttrss.last.headlines.el', el);
+        $('#mailboxlist #' + el).addClass('selected');
+      }
     },
     article: function(id, feed_ids){
       rcmail.enable_command('nextarticle', true);
@@ -275,21 +275,21 @@ var ttrss = {
     collapse: function(id, force){
       if(!isNaN(id)) return;
       if($('#' + id + ' div.treetoggle')===undefined) return;
-      if(force===undefined) force = $('#' + id + ' div.treetoggle').hasClass('collapsed');
+      if(force===undefined) force = $('#' + id + '>div.treetoggle').hasClass('collapsed');
       var cur = locStore.get('ttrss.feed.expended');
       var find = id + ', ';
       if(force){
-        $('#' + id + ' div.treetoggle').removeClass('collapsed');
-        $('#' + id + ' div.treetoggle').addClass('expanded');
-        $('#' + id + ' ul#sub' + id).removeClass('hidden');
+        $('#' + id + '>div.treetoggle').removeClass('collapsed');
+        $('#' + id + '>div.treetoggle').addClass('expanded');
+        $('#' + id + '>ul#sub' + id).removeClass('hidden');
         $('#' + id).attr("aria-expanded", "true");
         if(cur===null) cur = find;
         else if(cur.search(find)==-1) cur += find;
         if(locStore.get('ttrss.feed.expended')!=cur&&cur!==null) locStore.set('ttrss.feed.expended', cur);
       }else{
-        $('#' + id + ' div.treetoggle').addClass('collapsed');
-        $('#' + id + ' div.treetoggle').removeClass('expanded');
-        $('#' + id + ' ul#sub' + id).addClass('hidden');
+        $('#' + id + '>div.treetoggle').addClass('collapsed');
+        $('#' + id + '>div.treetoggle').removeClass('expanded');
+        $('#' + id + '>ul#sub' + id).addClass('hidden');
         $('#' + id).attr("aria-expanded", "false");
         var reg = new RegExp(find, 'g');
         cur = cur.replace(reg, '');
