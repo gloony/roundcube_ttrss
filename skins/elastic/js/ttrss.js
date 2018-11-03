@@ -30,6 +30,9 @@ var ttrss = {
     $('#threadselect-remove ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=false');
   },
   after: {
+    article: function(){
+      if(rcmail.env.ttrss_autoread) ttrss.loadLastFeeds();
+    },
     headlines: function(page){
       if(ttrss.article.selectPending!==null){
         switch(ttrss.article.selectPending){
@@ -75,7 +78,7 @@ var ttrss = {
   },
   load: {
     folder: function(){
-      $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){ ttrss.loadExpendedFeed(); $(locStore.get('ttrss.last.headlines.el')).addClass('selected'); });
+      $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){ ttrss.loadExpendedFeed(); $('#mailboxlist #' + locStore.get('ttrss.last.headlines.el')).addClass('selected'); });
       locStore.unset('ttrss.last.feeds');
     },
     headlines: function(id, view_mode, offset, is_cat, el){
@@ -106,8 +109,8 @@ var ttrss = {
       $('#trsHL' + id).addClass('selected expended focused');
       ttrss.scrollToElement(document.getElementById('trsHL' + id), document.getElementById('messagelist-content'));
       $('#messagecontframe').attr('src', './?_task=ttrss&_action=getArticle&id=' + id);
-      $('#trsHL' + id).removeClass('unread');
-      $('#messagecontframe').on('load', function(){ ttrss.loadLastFeeds(); });
+     if(rcmail.env.ttrss_autoread)  $('#trsHL' + id).removeClass('unrea');
+      $('#messagecontframe').on('load', function(){ ttrss.after.article(); });
       locStore.set('trs.last.article.feed_ids', ttrss.currentPage);
     }
   },

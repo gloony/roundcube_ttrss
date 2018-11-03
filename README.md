@@ -21,7 +21,7 @@ Find a way to count all article by feed (and activate button last page)
 Make loading indication for pending action
 Multiselection for read, star or tag articles
 Make timer for count unread items better
-More options on settings (read on view, auto refresh timer, display only unread feeds)
+More options on settings (auto refresh timer, ...)
 Search menu
 Sort menu
 Optimization

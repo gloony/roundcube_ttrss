@@ -6,6 +6,8 @@ class ttrss extends rcube_plugin
   public $rcmail;
   public $ui;
   private $pagesize = 50;
+  private $autoread = false;
+  private $showonlyunread = false;
 
   function init()
   {
@@ -32,6 +34,14 @@ class ttrss extends rcube_plugin
     if($this->rc->config->get('ttrss_username') !== null && $this->rc->config->get('ttrss_username') !== '')
     {
       if($this->rc->config->get('ttrss_pagesize') !== null) $this->pagesize = $this->rc->config->get('ttrss_pagesize');
+      if($this->rc->config->get('ttrss_autoread') !== null){
+        if( $this->rc->config->get('ttrss_autoread') === 'on') $this->autoread = false;
+        else $this->autoread = true;
+      }else $this->autoread = true;
+      if($this->rc->config->get('ttrss_showonlyunread') !== null){
+        if( $this->rc->config->get('ttrss_showonlyunread') === 'on') $this->showonlyunread = true;
+        else $this->showonlyunread = false;
+      }else $this->showonlyunread = false;
       $this->register_action('getUnread', array($this, 'getUnread'));
       $this->register_action('getTree', array($this, 'getTree'));
       // $this->register_action('getFeeds', array($this, 'getFeeds'));
@@ -71,6 +81,7 @@ class ttrss extends rcube_plugin
       $header_title = $this->rc->config->get('ttrss_username').'@'.$url;
       $this->rcmail->output->set_env('ttrss_header_title', $header_title);
       $this->rcmail->output->set_env('ttrss_pagesize', $this->pagesize);
+      $this->rcmail->output->set_env('ttrss_autoread', $this->autoread);
       $skin_path = $this->local_skin_path();
       $this->include_script($skin_path.'/js/locStore.js');
       $this->include_script($skin_path.'/js/keyboard.js');
@@ -124,7 +135,7 @@ class ttrss extends rcube_plugin
     $ttrss = $this->createAPI();
     if($ttrss!==false)
     {
-      $callback = $ttrss->getCategories(false, true);
+      $callback = $ttrss->getCategories($this->showonlyunread, true);
       $items = $callback['content'];
       $keys = array_column($items, 'id');
       array_multisort($keys, SORT_DESC, $items);
@@ -189,7 +200,7 @@ class ttrss extends rcube_plugin
     if($ttrss!==false)
     {
       if($id===null) $id = $_GET['id'];
-      $callback = $ttrss->getFeeds($id);
+      $callback = $ttrss->getFeeds($id, $this->showonlyunread);
       $items = $callback['content'];
       $keys = array_column($items, 'title');
       array_multisort($keys, SORT_ASC, $items);
@@ -266,6 +277,7 @@ class ttrss extends rcube_plugin
       else $is_cat = true;
       if(isset($_GET['view_mode'])&&!empty($_GET['view_mode'])) $view_mode = $_GET['view_mode'];
       else $view_mode = 'all_articles';
+      if($this->showonlyunread) $view_mode = 'unread';
       echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty.">';
       $callback = $ttrss->getHeadlines($_GET['id'], $limit, $offset, $is_cat, 'true', 'false', $view_mode, false, 0, true, 'date_reverse');
       foreach($callback['content'] as $item){
@@ -370,7 +382,7 @@ class ttrss extends rcube_plugin
   </body>
 </html>
 <?php
-      $ttrss->updateArticle($_GET['id'], 0, 2);
+      if($this->autoread) $ttrss->updateArticle($_GET['id'], 0, 2);
     }
     exit;
   }
@@ -483,16 +495,23 @@ class ttrss extends rcube_plugin
     $usernameV = rcube_utils::get_input_value('ttrss_username', rcube_utils::INPUT_POST);
     $passwdV = rcube_utils::get_input_value('ttrss_passwd', rcube_utils::INPUT_POST);
     $pagesizeV = rcube_utils::get_input_value('ttrss_pagesize', rcube_utils::INPUT_POST);
+    $autoreadV = rcube_utils::get_input_value('ttrss_autoread', rcube_utils::INPUT_POST);
+    $autoreadV = rcube_utils::get_input_value('ttrss_autoread', rcube_utils::INPUT_POST);
+    $showonlyunreadV = rcube_utils::get_input_value('ttrss_showonlyunread', rcube_utils::INPUT_POST);
     $url = new html_inputfield(array('name' => 'ttrss_url', 'type' => 'text', 'autocomplete' => 'off', 'value' => $urlV != '' ? $urlV : $this->rc->config->get('ttrss_url'), 'size' => 255));
     $username = new html_inputfield(array('name' => 'ttrss_username', 'type' => 'text', 'autocomplete' => 'off', 'value' => $usernameV != '' ? $usernameV : $this->rc->config->get('ttrss_username'), 'size' => 255));
     $passwd = new html_inputfield(array('name' => 'ttrss_passwd', 'type' => 'password', 'autocomplete' => 'off', 'value' => '', 'size' => 255));
     $pagesize = new html_inputfield(array('name' => 'ttrss_pagesize', 'type' => 'text', 'autocomplete' => 'off', 'value' => $pagesizeV != '' ? $pagesizeV : $this->rc->config->get('ttrss_pagesize'), 'size' => 255));
+    $autoread = new html_inputfield(array('name' => 'ttrss_autoread', 'type' => 'checkbox', 'checked' => $autoreadV != '' ? $autoreadV : $this->rc->config->get('ttrss_autoread')));
+    $showonlyunread = new html_inputfield(array('name' => 'ttrss_showonlyunread', 'type' => 'checkbox', 'checked' => $showonlyunreadV != '' ? $showonlyunreadV : $this->rc->config->get('ttrss_showonlyunread')));
     $p['blocks']['ttrss_preferences_section'] = array(
       'options' => array(
         array('title'=> rcube::Q($this->gettext('url')), 'content' => $url->show()),
         array('title'=> rcube::Q($this->gettext('username')), 'content' => $username->show()),
         array('title'=> rcube::Q($this->gettext('password')), 'content' => $passwd->show()),
         array('title'=> rcube::Q($this->gettext('pagesize')), 'content' => $pagesize->show()),
+        array('title'=> rcube::Q($this->gettext('autoread')), 'content' => $autoread->show()),
+        array('title'=> rcube::Q($this->gettext('showonlyunread')), 'content' => $showonlyunread->show()),
       ),
       'name' => rcube::Q($this->gettext('ttrss_settings'))
     );
@@ -509,11 +528,15 @@ class ttrss extends rcube_plugin
       $passwd = rcube_utils::get_input_value('ttrss_passwd', rcube_utils::INPUT_POST);
       if($passwd == '') $passwd = $this->decrypt($this->rc->config->get('ttrss_passwd'));
       $ttrss_pagesize = rcube_utils::get_input_value('ttrss_pagesize', rcube_utils::INPUT_POST);
+      $ttrss_autoread = rcube_utils::get_input_value('ttrss_autoread', rcube_utils::INPUT_POST);
+      $ttrss_showonlyunread = rcube_utils::get_input_value('ttrss_showonlyunread', rcube_utils::INPUT_POST);
       $p['prefs'] = array(
         'ttrss_url'  => $url,
         'ttrss_username'  => $username,
         'ttrss_passwd'    => $this->encrypt($passwd),
         'ttrss_pagesize'    => $ttrss_pagesize,
+        'ttrss_autoread'    => $ttrss_autoread,
+        'ttrss_showonlyunread'    => $ttrss_showonlyunread,
       );
     }
     return $p;

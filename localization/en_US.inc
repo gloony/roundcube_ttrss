@@ -9,4 +9,6 @@
   $labels['remove_tag'] = 'Remove tag';
   $labels['feed_subscribe'] = 'Subscribe feed';
   $labels['feed_unsubscribe'] = 'Unsubscribe feed';
+  $labels['autoread'] = 'Keep article unread when opened';
+  $labels['showonlyunread'] = 'Show only unread items';
 ?>
