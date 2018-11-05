@@ -72,7 +72,7 @@ var ttrss = {
       $('#threadselect-add ul.toolbarmenu li a').each(function(){
         var id = $(this).attr('id');
         id = id.substr(6);
-        document.styleSheets[0].addRule('#trsCAT' + id + ' a:before','color: ' + $('#trsLBL' + id).css('color') + ';');
+        document.styleSheets[0].addRule('#trsSpCAT' + id + ' a:before','color: ' + $('#trsLBL' + id).css('color') + ';');
       });
     }
   },

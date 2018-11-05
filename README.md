@@ -20,7 +20,7 @@ Let the possibility to subscribe or unsubscribe to feeds
 Find a way to count all article by feed (and activate button last page)
 Make loading indication for pending action
 Multiselection for read, star or tag articles
-Make timer for count unread items better
+Make timer for count unread items better (use getCounters and not reload all getTree each time)
 More options on settings (auto refresh timer, ...)
 Search menu
 Sort menu
@@ -31,7 +31,6 @@ Optimization
 
 ```
 Localization to improve and some texts was never changed from the Mail template
-Sorting feed and category not work correctly
 ```
 
 # Limitations
