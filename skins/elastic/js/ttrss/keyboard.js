@@ -1,4 +1,4 @@
-var keyboard = {
+ttrss.keyboard = {
   onKeyDown: function(event){
     var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
     chCode = event.which ? event.which : event.keyCode ? event.keyCode : 0;
@@ -43,7 +43,3 @@ var keyboard = {
     } return valuetoreturn;
   }
 };
-
-$(function(){
-  $('body').on('keydown', function(e){ if(keyboard.onKeyDown(e)){ return true; }else{ e.preventDefault(); return false; } });
-});

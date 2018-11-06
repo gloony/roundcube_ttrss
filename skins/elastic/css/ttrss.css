@@ -1,8 +1,3 @@
-.toolbar a.button.macro:before{
-  content: "\f0d0"}
-.toolbar a.button.save:before{
-  content: "\f0c7"}
-
 .toolbar a.button.extwin:before{
   content: "\f360"}
 
@@ -31,11 +26,6 @@ body>#layout>div.content .iframe-wrapper{
 
 .messagelist .message.unread td.subject span.msgicon.status:before{
   color: #ffd452}
-
-#folderlist-content #countdown{
-  position:absolute;
-  bottom:0;
-  right:0}
 
 #trsPrCAT-1 a:before{
   font-weight: 600;
@@ -73,30 +63,3 @@ body>#layout>div.content .iframe-wrapper{
 ul#mailboxlist li.label a:before{
   font-weight: 600;
   content: "\f02b"}
-
-#wdliFLDfull>a:before{
-  content: "\f07b"}
-#wdliFLDempty>a:before{
-  content: "\f07b"}
-
-#wdliFLfile>a:before{
-  content: "\f15c"}
-#wdliFLtab>a:before{
-  content: "\f15b"}
-
-#wdliFLpreview>a:before{
-  content: "\f016"}
-#wdliFLotp>a:before{
-  content: "\f328"}
-#wdliFLftp>a:before{
-  content: "\f233"}
-#wdliFLzip>a:before{
-  content: "\f1c6"}
-#wdliFLpicture>a:before{
-  content: "\f1c5"}
-#wdliFLmusic>a:before{
-  content: "\f1c7"}
-#wdliFLvideo>a:before{
-  content: "\f1c8"}
-#wdliFLurl>a:before{
-  content: "\f1c9"}

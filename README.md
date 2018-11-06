@@ -1,6 +1,6 @@
 # TTRSS on RoundCube
 
-Embed your TTRSS account into your RoundCube (used the TTRSS API)
+Embed your [TTRSS](https://tt-rss.org) account into your [RoundCube](https://roundcube.net) (used the [TTRSS API](https://git.tt-rss.org/fox/tt-rss/wiki/ApiReference))
 
 **This plugin work only with RoundCube 1.4+ and with elastic skin**
 
@@ -46,5 +46,14 @@ So for all these actions, your need to log in into your TTRSS instance and while
 ```
 
 # Screenshots
+
 ![roundcube_ttrss Main](screenshots/Main.png)
 ![roundcube_ttrss Settings](screenshots/Settings.png)
+
+# OpenSource used
+
+[tt-rss-api-php-class by tofika](https://github.com/tofika/tt-rss-api-php-class)
+
+[favico.js by ejci](https://github.com/ejci/favico.js)
+
+[elastic by roundcube](https://github.com/roundcube/elastic)

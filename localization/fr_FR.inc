@@ -9,6 +9,6 @@
   $labels['remove_label'] = 'Enlever étiquette';
   $labels['feed_subscribe'] = 'Nouvel abonnement';
   $labels['feed_unsubscribe'] = 'Se désabonner';
-  $labels['autoread'] = 'Ne pas marquer les articles lus à la lecture;
+  $labels['autoread'] = 'Ne pas marquer les articles lus à la lecture';
   $labels['showonlyunread'] = 'Affiche que les éléments non lus';
 ?>

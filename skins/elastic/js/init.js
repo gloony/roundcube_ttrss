@@ -1,4 +1,5 @@
 rcmail.addEventListener('init', function(evt) {
+  $('body').on('keydown', function(e){ if(ttrss.keyboard.onKeyDown(e)){ return true; }else{ e.preventDefault(); return false; } });
   ttrss.refresh();
   ttrss.refreshLabels();
 
@@ -12,6 +13,9 @@ rcmail.addEventListener('init', function(evt) {
   rcmail.register_command('forward', ttrss.article.forward, false);
   rcmail.register_command('feed_subscribe', null, true);
   rcmail.register_command('feed_unsubscribe', null, false);
+
+  rcmail.register_command('select-all', ttrss.select, false);
+  rcmail.register_command('select-none', ttrss.unselect, false);
 
   // create custom button
   // var button = $('<A>').attr('id', 'rcmSampleButton').html(rcmail.gettext('buttontitle', 'sampleplugin'));

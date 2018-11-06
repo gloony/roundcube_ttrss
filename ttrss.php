@@ -5,6 +5,7 @@ class ttrss extends rcube_plugin
   public $rc;
   public $rcmail;
   public $ui;
+
   private $pagesize = 50;
   private $autoread = false;
   private $showonlyunread = false;
@@ -19,9 +20,7 @@ class ttrss extends rcube_plugin
     $this->add_hook('startup', array($this, 'startup'));
     $this->register_action('index', array($this, 'index'));
     if($this->rc->task == 'mail')
-    {
       $this->add_hook('message_compose', array($this, 'message_compose'));
-    }
     elseif($this->rc->task == 'settings')
     {
       $this->add_hook('preferences_sections_list', array($this, 'ttrss_preferences_sections_list'));
@@ -42,17 +41,16 @@ class ttrss extends rcube_plugin
         if( $this->rc->config->get('ttrss_showonlyunread') === 'on') $this->showonlyunread = true;
         else $this->showonlyunread = false;
       }else $this->showonlyunread = false;
-      $this->register_action('getUnread', array($this, 'getUnread'));
-      $this->register_action('getTree', array($this, 'getTree'));
-      // $this->register_action('getFeeds', array($this, 'getFeeds'));
-      $this->register_action('getLabels', array($this, 'getLabels'));
-      $this->register_action('getHeadlines', array($this, 'getHeadlines'));
-      $this->register_action('getArticle', array($this, 'getArticle'));
-      $this->register_action('getArticleAttachments', array($this, 'getArticleAttachments'));
-      $this->register_action('openLink', array($this, 'openLink'));
-      $this->register_action('getCounters', array($this, 'getCounters'));
-      $this->register_action('updateArticle', array($this, 'updateArticle'));
-      $this->register_action('setArticleLabel', array($this, 'setArticleLabel'));
+      $this->register_action('getUnread', array($this, 'loadAction'));
+      $this->register_action('getTree', array($this, 'loadAction'));
+      $this->register_action('getLabels', array($this, 'loadAction'));
+      $this->register_action('getHeadlines', array($this, 'loadAction'));
+      $this->register_action('getArticle', array($this, 'loadAction'));
+      $this->register_action('getArticleAttachments', array($this, 'loadAction'));
+      $this->register_action('openLink', array($this, 'loadAction'));
+      $this->register_action('getCounters', array($this, 'loadAction'));
+      $this->register_action('updateArticle', array($this, 'loadAction'));
+      $this->register_action('setArticleLabel', array($this, 'loadAction'));
       if(!$this->rcmail->output->framed)
       {
         $this->add_button(array(
@@ -64,8 +62,8 @@ class ttrss extends rcube_plugin
           'type'       => 'link',
         ), 'taskbar');
         $skin_path = $this->local_skin_path();
-        $this->include_script($skin_path.'/js/badge.js');
-        $this->include_stylesheet($skin_path.'/css/icon.css');
+        $this->include_script($skin_path.'/js/taskmenu.js');
+        $this->include_stylesheet($skin_path.'/css/taskmenu.css');
       }
     }
   }
@@ -83,11 +81,17 @@ class ttrss extends rcube_plugin
       $this->rcmail->output->set_env('ttrss_pagesize', $this->pagesize);
       $this->rcmail->output->set_env('ttrss_autoread', $this->autoread);
       $skin_path = $this->local_skin_path();
+      $this->include_script($skin_path.'/js/favico.js');
       $this->include_script($skin_path.'/js/locStore.js');
-      $this->include_script($skin_path.'/js/keyboard.js');
-      $this->include_script($skin_path.'/js/ttrss.js');
       $this->include_script($skin_path.'/js/init.js');
-      $this->include_stylesheet($skin_path."/css/app.css");
+      $this->include_script($skin_path.'/js/ttrss/ttrss.js');
+      $this->include_script($skin_path.'/js/ttrss/article.js');
+      $this->include_script($skin_path.'/js/ttrss/feed.js');
+      $this->include_script($skin_path.'/js/ttrss/folder.js');
+      $this->include_script($skin_path.'/js/ttrss/headlines.js');
+      $this->include_script($skin_path.'/js/ttrss/keyboard.js');
+      $this->include_script($skin_path.'/js/ttrss/label.js');
+      $this->include_stylesheet($skin_path."/css/ttrss.css");
       $this->rcmail->output->set_pagetitle($this->gettext('ttrss'));
       $this->rcmail->output->add_handlers(array('ttrsscontent' => array($this, 'content')));
       $this->rcmail->output->send('ttrss.ttrss');
@@ -104,7 +108,7 @@ class ttrss extends rcube_plugin
 
   function createAPI()
   {
-    require_once __DIR__ . '/ttrssAPI.php';
+    require_once __DIR__ . '/lib/ttrssAPI.php';
     $username = $this->rc->config->get('ttrss_username');
     if($username!==null)
     {
@@ -117,362 +121,9 @@ class ttrss extends rcube_plugin
     exit;
   }
 
-  function getUnread()
+  function loadAction()
   {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      $ttrssUnread = $ttrss->getUnread();
-      echo $ttrssUnread['content']['unread'];
-    }
-    else
-      echo 0;
-    exit;
-  }
-
-  function getTree()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      $callback = $ttrss->getCategories($this->showonlyunread, true);
-      $items = $callback['content'];
-      $keys = array_column($items, 'id');
-      array_multisort($keys, SORT_DESC, $items);
-      foreach($items as $item){
-        if($item['id']==-1||$item['id']==-2){
-          $class = 'mailbox'; $unread = '';
-          if($item['unread']>0){
-            $class .= ' unread';
-            $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
-          }
-          echo '      <li id="trsPrCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" role="treeitem" aria-level="1"><a onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
-        <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">&nbsp;</div>
-        <ul id="subtrsPrCAT'.$item['id'].'" class="hidden" role="group">
-';
-          $callback = $ttrss->getFeeds($item['id']);
-          $sitems = $callback['content'];
-          $keys = array_column($sitems, 'title');
-          array_multisort($keys, SORT_ASC|SORT_NATURAL|SORT_FLAG_CASE, $sitems);
-          $view_mode = 'all_articles';
-          foreach($sitems as $sitem){
-            $class = 'mailbox'; $unread = '';
-            if($sitem['unread']>0){
-              $class .= ' unread';
-              $unread = '<span class="unreadcount">'.$sitem['unread'].'</span>';
-              // $view_mode = 'unread';
-            }
-            if(substr($sitem['id'], 0, 3)==='-10') $class .= ' label';
-            echo '          <li id="trsSpCAT'.$sitem['id'].'" class="'.$class.'" role="treeitem" aria-level="2">
-            <a onclick="ttrss.load.headlines('.$sitem['id'].', \''.$view_mode.'\', 1, \'true\', \'trsSpCAT'.$sitem['id'].'\'); return false;">'.$sitem['title'].$unread.'</a>
-          </li>';
-            }
-          echo '        </ul>
-      </li>
-';
-        }
-      }
-      $keys = array_column($items, 'title');
-      array_multisort($keys, SORT_ASC|SORT_NATURAL|SORT_FLAG_CASE, $items);
-      usort($items, function($a, $b){
-        return (int)($a['id']==0);
-      });
-      foreach($items as $item){
-        if($item['id']!=-1&&$item['id']!=-2){
-          $class = 'mailbox'; $unread = '';
-          if($item['unread']>0){
-            $class .= ' unread';
-            $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
-          }
-          echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" role="treeitem" aria-level="1"><a onclick="ttrss.load.headlines('.$item['id'].', \''.$view_mode.'\', 1, \'true\', \'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
-        <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
-        <ul id="subtrsCAT'.$item['id'].'" class="hidden" role="group">';
-          $this->getFeeds($item['id']);
-          echo '        </ul>
-      </li>
-';
-        }
-      }
-    }
-    exit;
-  }
-
-  private function getFeeds($id = null, $level = 2)
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      if($id===null) $id = $_GET['id'];
-      $callback = $ttrss->getFeeds($id, $this->showonlyunread);
-      $items = $callback['content'];
-      $keys = array_column($items, 'title');
-      array_multisort($items, SORT_ASC|SORT_NATURAL|SORT_FLAG_CASE, $keys);
-      foreach($items as $item){
-        if($item['id']==-2||$item['id']==0) continue;
-        if(isset($item['is_cat'])&&$item['is_cat']){
-          $class = 'mailbox'; $unread = '';
-          $view_mode = 'all_articles';
-          if($item['unread']>0){
-            $class .= ' unread';
-            $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
-            // $view_mode = 'unread';
-          }
-          $indent = '';
-          $subtxt = 'sub';
-          if($level>2){
-            for($i = 2; $i <= $level; $i++){
-              $indent .= '  ';
-              $subtxt .= 'sub';
-            }
-          }
-          echo $indent.'        <li id="'.$subtxt.'trsCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" role="treeitem" aria-level="1"><a onclick="ttrss.load.headlines('.$item['id'].', \'\', 1, \'true\', \''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
-'.$indent.'          <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
-'.$indent.'          <ul id="'.$subtxt.'subtrsCAT'.$item['id'].'" class="hidden" role="group">';
-          $this->getFeeds($item['id'], $level + 1);
-          echo $indent.'          </ul>
-'.$indent.'      </li>
-';
-        }
-      }
-      foreach($items as $item){
-        if($item['id']==-2||$item['id']==0) continue;
-        if(!isset($item['is_cat'])||!$item['is_cat']){
-          $class = 'mailbox'; $unread = '';
-          $view_mode = 'all_articles';
-          if($item['unread']>0){
-            $class .= ' unread';
-            $unread = '<span class="unreadcount">'.$item['unread'].'</span>';
-            // $view_mode = 'unread';
-          }
-          $indent = '';
-          $subtxt = 'sub';
-          if($level>2){
-            for($i = 2; $i <= $level; $i++){
-              $indent .= '  ';
-              $subtxt .= 'sub';
-            }
-          }
-          $class .= ' feed';
-          echo $indent.'          <li id="'.$subtxt.'trsFD'.$item['id'].'" class="'.$class.'" role="treeitem" aria-level="'.$level.'">
-'.$indent.'            <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.load.headlines('.$item['id'].', \''.$view_mode.'\', 1, \'false\', \''.$subtxt.'trsFD'.$item['id'].'\');return false;">'.$item['title'].$unread.'</a>
-'.$indent.'          </li>
-';
-        }
-      }
-    }
-    if(isset($_GET['id'])) exit;
-  }
-
-  function getLabels()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      // $callback = $ttrss->getFeeds(-2, false, 200, 0, true);
-      $callback = $ttrss->getLabels();
-      $items = $callback['content'];
-      $keys = array_column($items, 'title');
-      array_multisort($keys, SORT_ASC, $items);
-      foreach($items as $item){
-        if($item['id']==-2||$item['id']==0) continue;
-        echo '<li role="menuitem"><a class="expand all active" id="trsLBL'.$item['id'].'" role="button" tabindex="-1" aria-disabled="true" onclick="ttrss.article.toggle.label('.$item['id'].', '.$_GET['mode'].'); return false;" style="color:'.$item['bg_color'].'">'.$item['caption'].'</a></li>';
-      }
-    }
-    exit;
-  }
-
-  function getHeadlines()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      $empty = true;
-      $limit = $this->pagesize;
-      if(isset($_GET['offset'])){
-        $offset = ($_GET['offset'] * $limit) + 1;
-        $offset = $offset - $this->pagesize;
-      }else $offset = 1;
-      if(isset($_GET['is_cat'])) $is_cat = $_GET['is_cat'];
-      else $is_cat = true;
-      if(isset($_GET['view_mode'])&&!empty($_GET['view_mode'])) $view_mode = $_GET['view_mode'];
-      else $view_mode = 'all_articles';
-      if($this->showonlyunread) $view_mode = 'unread';
-      echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty.">';
-      $callback = $ttrss->getHeadlines($_GET['id'], $limit, $offset, $is_cat, 'true', 'false', $view_mode, false, 0, true, 'date_reverse');
-      foreach($callback['content'] as $item){
-        if(!empty($item['labels'])){
-          $title = ''; $count = 0;
-          foreach($item['labels'] as $label){
-            if($title!==''){
-              $title .= ' - ';
-              $title .= $label[1];
-              $index = 0.2;
-              $dec1 = hexdec($color);
-              $dec2 = hexdec($label[3]);
-              $dec1 = ($dec1 < $dec2) ? $dec1^=$dec2^=$dec1^=$dec2 : $dec1;
-              $color = '#'.dechex($dec1 - ($dec1 - $dec2)*0.2);
-            }else{
-              $title = $label[1];
-              $color = $label[3];
-            }
-            $count++;
-          }
-          if($count>1) $attachment = 'tags';
-          else $attachment = 'tag';
-          $attachment = '<span class="'.$attachment.'" title="'.$title.'" style="color:'.$color.'"></span>';
-        }else $attachment = '&nbsp;';
-        $class = ''; $unread = '';
-        if($item['unread']>0){
-          $class .= ' unread';
-        }
-        if($item['marked']>0){
-          $class .= ' flagged';
-          $flag = 'flagged';
-        }else{
-          $flag = 'unflagged';
-        }
-        if($empty) $empty = false;
-        echo '    <tr id="trsHL'.$item['id'].'" class="message'.$class.'">
-      <td class="selection">
-        <input type="checkbox" tabindex="-1">
-      </td>
-      <td class="subject" tabindex="0">
-        <span class="fromto skip-on-drag">
-          <span class="adr">
-            <span class="rcmContactAddress">'.$item['feed_title'].'</span>
-          </span>
-        </span>
-        <span class="date skip-on-drag">'.date('H:i:s d/m/Y', $item['updated']).'</span>
-        <span class="subject">
-          <span id="wdNS.tree" class="msgicon status" title="" onclick="ttrss.article.toggle.read(\''.$item['id'].'\'); return false;"></span>
-          <a href="'.$item['link'].'" tabindex="-1" onclick="ttrss.load.article(\''.$item['id'].'\'); return false;">
-            <span>'.$item['title'].'</span>
-          </a>
-        </span>
-      </td>
-      <td class="flags">
-        <span class="flag"><span id="flagicnrcmrowOTE" class="'.$flag.'" onclick="ttrss.article.toggle.star(\''.$item['id'].'\'); return false;"></span></span>
-        <span class="attachment">'.$attachment.'</span>
-      </td>
-    </tr>';
-      }
-      if($empty) echo '<div class="listing-info">The list is empty.</div>';
-      echo '</table>';
-    }
-    exit;
-  }
-
-  function getArticle()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      $callback = $ttrss->getArticle($_GET['id']);
-      $target = '';
-      if(!$this->allowFrame($callback['content'][0]['link'])) $target = ' target="_BLANK"';
-      if(substr($callback['content'][0]['link'], 0, strlen('http://'))=='http://') $target = ' target="_BLANK"';
-      // var_dump($callback);
-?><!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title><?php echo $callback['content'][0]['title']; ?></title>
-    <link rel="stylesheet" href="skins/elastic/styles/styles.css?s=1535618602">
-    <link rel="stylesheet" href="plugins/ttrss/css/article.css?s=1535544692">
-  </head>
-  <body>
-    <h2><a id="rssHeadArticleLink" href="<?php echo $callback['content'][0]['link']; ?>" <?php echo $target; ?>><?php echo $callback['content'][0]['title']; ?></a></h2>
-    <hr /><br />
-    <?php echo $callback['content'][0]['content']; ?>
-    <?php
-      if(isset($callback['content'][0]['attachments'])&&!empty($callback['content'][0]['attachments'])){
-        echo '<hr /><br />';
-        foreach($callback['content'][0]['attachments'] as $attachments){
-          $url = './?_task=ttrss&_action=getArticleAttachments&id='.$_GET['id'].'&attachments='.$attachments['id'];
-          switch($attachments['content_type']){
-            case 'image/jpeg': echo '<img src="'.$url.'" class=att_preview />'; break;
-            case 'application/x-shockwave-flash': echo '<object width="'.$attachments['width'].'" height="'.$attachments['height'].'"><param name="movie" value="'.$attachments['content_url'].'"><embed src="'.$attachments['content_url'].'" width="'.$attachments['width'].'" height="'.$attachments['height'].'"></embed></object>'; break;
-            default:
-              echo '<a href="'.$attachments['content_url'].'">'.$attachments['content_url'].'</a>';
-              break;
-          }
-        }
-      } ?>
-
-  </body>
-</html>
-<?php
-      if($this->autoread) $ttrss->updateArticle($_GET['id'], 0, 2);
-    }
-    exit;
-  }
-
-  function getArticleAttachments()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      $callback = $ttrss->getArticle($_GET['id']);
-      if(isset($callback['content'][0]['attachments'])){
-        foreach($callback['content'][0]['attachments'] as $attachments){
-          if($attachments['id']==$_GET['attachments']){
-            header('Content-Type: '.$attachments['content_type']);
-            echo file_get_contents($attachments['content_url']);
-          }
-        }
-      }
-    }
-    exit;
-  }
-
-  function openLink()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      $callback = $ttrss->getArticle($_GET['id']);
-      header('Location: '.$callback['content'][0]['link']);
-    }
-    exit;
-  }
-
-  function getCounters()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      $output_mode = '';
-      if(isset($_GET['output_mode'])) $output_mode = $_GET['output_mode'];
-      $counters = $ttrss->getCounters($output_mode);
-      $counters = $counters['content'];
-      var_dump($counters); exit();
-    }
-    exit;
-  }
-
-  function updateArticle()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      if(isset($_GET['mode'])) $mode = $_GET['mode'];
-      else $mode = 2;
-      $ttrss->updateArticle($_GET['id'], $mode, $_GET['field']);
-    }
-    exit;
-  }
-
-  function setArticleLabel()
-  {
-    $ttrss = $this->createAPI();
-    if($ttrss!==false)
-    {
-      switch($_GET['mode']){
-        case 0: case '0': case false: $mode = false; break;
-        case 1: case '1': case true: default: $mode = true;
-      }
-      var_dump($ttrss->setArticleLabel($_GET['id_article'], $_GET['id_label'], $mode));
-    }
-    exit;
+    require_once __DIR__ . '/lib/action/'.$this->rc->action.'.php';
   }
 
   function message_compose($args)
@@ -582,12 +233,5 @@ class ttrss extends rcube_plugin
     $clear = $this->rcmail->decrypt($passwd, 'ttrss_des_key');
     $deskey_backup = $this->rcmail->config->set('ttrss_des_key', '');
     return $clear;
-  }
-
-  public function allowFrame($url){
-    $header = @get_headers($url, 1);
-    if(!$header||stripos($header[0], '200 ok')===false) return false;
-    elseif (isset($header['X-Frame-Options'])&&(stripos($header['X-Frame-Options'], 'SAMEORIGIN')!==false||stripos($header['X-Frame-Options'], 'deny')!==false)) return false;
-    else return true;
   }
 }
