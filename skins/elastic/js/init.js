@@ -1,7 +1,13 @@
-rcmail.addEventListener('init', function(evt) {
+rcmail.addEventListener('init', function(evt){
   $('body').on('keydown', function(e){ if(ttrss.keyboard.onKeyDown(e)){ return true; }else{ e.preventDefault(); return false; } });
-  ttrss.refresh();
-  ttrss.refreshLabels();
+  ttrss.tree.load();
+  ttrss.labels.load();
+  ttrss.headlines.reload();
+  ttrss.favico = new Favico({
+    animation:'fade',
+    bgColor:'#ff6f00'
+  });
+  ttrss.nameurl = document.title;
 
   rcmail.register_command('checkmail', ttrss.refresh, true);
   rcmail.register_command('firstpage', ttrss.headlines.page.first, false);
@@ -23,4 +29,7 @@ rcmail.addEventListener('init', function(evt) {
   // add and register
   // rcmail.add_element(button, 'toolbar');
   // rcmail.register_button('plugin.samplecmd', 'rcmSampleButton', 'link');
+});
+rcmail.addEventListener('plugin.refresh_ttrss', function(evt){
+    ttrss.tree.counters();
 });

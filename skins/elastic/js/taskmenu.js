@@ -1,19 +1,15 @@
-$(document).ready(function(){
+rcmail.addEventListener('init', function(evt){
   if(window.rcmail){
     if($(".button-ttrss").length){
-      if(rcmail.env.task=='ttrss') window.setInterval(updateBadgeTTRSS, 60000);
-      else window.setInterval(updateBadgeTTRSS, 120000);
-      updateBadgeTTRSS();
-    }
-    if(rcmail.env.task=='ttrss'){
-      faviconTTRSS = new Favico({animation:'fade',bgColor:'#ff6f00'});
+      if(rcmail.env.task=='ttrss') window.setInterval(ttrss_badge, 60000);
+      else window.setInterval(ttrss_badge, 120000);
+      ttrss_badge();
     }
   }
 });
+rcmail.addEventListener('plugin.refresh_ttrss', function(evt){ ttrss_badge(); });
 var lastTTRSSCount = null;
-var firstTTRSSTitle = null;
-var faviconTTRSS = null;
-function updateBadgeTTRSS(){
+function ttrss_badge(){
   $.ajax({
     type: "POST",
     url: "/?_task=ttrss&_action=getUnread",
@@ -27,9 +23,9 @@ function updateBadgeTTRSS(){
       if(lastTTRSSCount!=data){
         lastTTRSSCount = data;
         $(".button-ttrss").attr('data-badge', data);
-        if(localStorage.ttrss_unreads===undefined) localStorage.setItem('ttrss_unreads', 0);
-        if(localStorage.ttrss_unreads<data){
-          localStorage.setItem('ttrss_unreads', data);
+        if(localStorage.getItem('ttrss.unread.counter')===undefined) localStorage.setItem('ttrss.unread.counter', 0);
+        if(localStorage.getItem('ttrss.unread.counter')<data){
+          localStorage.setItem('ttrss.unread.counter', data);
           var title = 'gNews';
           var icon = 'plugins/ttrss/skins/elastic/asset/logo.png';
           var body = 'You have ' + data;
@@ -39,16 +35,8 @@ function updateBadgeTTRSS(){
             var notification = new Notification(title, { icon: icon, body: body });
             notification.onclick = function(){ window.focus(); this.close(); };
           }else Notification.requestPermission();
-        }else if(localStorage.ttrss_unreads>data){
-          localStorage.setItem('ttrss_unreads', data);
-        }
-        if(rcmail.env.task=='ttrss'){
-          if(firstTTRSSTitle===null) firstTTRSSTitle = document.title;
-          if(data!==null) document.title = "(" + data + ") " + firstTTRSSTitle;
-          else document.title = firstTTRSSTitle;
-          if(data===null) faviconTTRSS.badge(0);
-          else faviconTTRSS.badge(data);
-          ttrss.loadLastFeeds();
+        }else if(localStorage.getItem('ttrss.unread.counter')>data){
+          localStorage.setItem('ttrss.unread.counter', data);
         }
       }
     },

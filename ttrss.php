@@ -18,14 +18,21 @@ class ttrss extends rcube_plugin
     $this->add_texts('localization/');
     $this->register_task('ttrss');
     $this->add_hook('startup', array($this, 'startup'));
+    $this->add_hook('refresh', array($this, 'refresh'));
     $this->register_action('index', array($this, 'index'));
     if($this->rc->task == 'mail')
+    {
       $this->add_hook('message_compose', array($this, 'message_compose'));
+    }
     elseif($this->rc->task == 'settings')
     {
       $this->add_hook('preferences_sections_list', array($this, 'ttrss_preferences_sections_list'));
       $this->add_hook('preferences_list', array($this, 'ttrss_preferences_list'));
       $this->add_hook('preferences_save', array($this, 'ttrss_preferences_save'));
+    }
+    if($this->rc->task != 'ttrss')
+    {
+      $this->include_script($this->local_skin_path().'/js/taskmenu.js');
     }
   }
   function startup()
@@ -46,7 +53,7 @@ class ttrss extends rcube_plugin
       $this->register_action('getLabels', array($this, 'loadAction'));
       $this->register_action('getHeadlines', array($this, 'loadAction'));
       $this->register_action('getArticle', array($this, 'loadAction'));
-      $this->register_action('getArticleAttachments', array($this, 'loadAction'));
+      $this->register_action('getAttachment', array($this, 'loadAction'));
       $this->register_action('openLink', array($this, 'loadAction'));
       $this->register_action('getCounters', array($this, 'loadAction'));
       $this->register_action('updateArticle', array($this, 'loadAction'));
@@ -61,11 +68,12 @@ class ttrss extends rcube_plugin
           'label'      => 'ttrss.ttrss',
           'type'       => 'link',
         ), 'taskbar');
-        $skin_path = $this->local_skin_path();
-        $this->include_script($skin_path.'/js/taskmenu.js');
-        $this->include_stylesheet($skin_path.'/css/taskmenu.css');
+        $this->include_stylesheet($this->local_skin_path().'/css/taskmenu.css');
       }
     }
+  }
+  function refresh($r){
+    $this->rc->output->command('plugin.refresh_ttrss');
   }
 
   function index()
@@ -87,10 +95,10 @@ class ttrss extends rcube_plugin
       $this->include_script($skin_path.'/js/ttrss/ttrss.js');
       $this->include_script($skin_path.'/js/ttrss/article.js');
       $this->include_script($skin_path.'/js/ttrss/feed.js');
-      $this->include_script($skin_path.'/js/ttrss/folder.js');
       $this->include_script($skin_path.'/js/ttrss/headlines.js');
       $this->include_script($skin_path.'/js/ttrss/keyboard.js');
-      $this->include_script($skin_path.'/js/ttrss/label.js');
+      $this->include_script($skin_path.'/js/ttrss/labels.js');
+      $this->include_script($skin_path.'/js/ttrss/tree.js');
       $this->include_stylesheet($skin_path."/css/ttrss.css");
       $this->rcmail->output->set_pagetitle($this->gettext('ttrss'));
       $this->rcmail->output->add_handlers(array('ttrsscontent' => array($this, 'content')));

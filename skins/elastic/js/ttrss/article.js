@@ -34,7 +34,7 @@ ttrss.article = {
       }
       $('#trsHL' + id).toggleClass('unread');
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=2' + mode })
-        .done(function(html){ ttrss.loadLastFeeds(); });
+        .done(function(html){ ttrss.tree.counters(); });
     },
     star: function(id, mode){
       if(mode===undefined) mode = '';
@@ -48,7 +48,7 @@ ttrss.article = {
       $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('unflagged');
       $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('flagged');
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=0' + mode })
-        .done(function(html){ ttrss.loadLastFeeds(); });
+        .done(function(html){ ttrss.tree.counters(); });
     }
   },
   first: function(){
@@ -84,7 +84,10 @@ ttrss.article = {
     locStore.set('trs.last.article.feed_ids', ttrss.currentPage);
   },
   loadfunc(){
-    if(rcmail.env.ttrss_autoread) ttrss.loadLastFeeds();
+    if(rcmail.env.ttrss_autoread){
+      ttrss.article.toggle.read(ttrss.article.currentID, 0);
+      ttrss.tree.counters();
+    }
   },
   next: function(){
     var id = $('#messagelist-content tr.selected').attr('id');

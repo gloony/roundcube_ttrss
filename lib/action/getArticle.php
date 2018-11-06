@@ -28,7 +28,7 @@ if( !allowFrame($article['link'])
       echo '    <hr /><br />'."\n";
       foreach( $article['attachments'] as $attachments )
       {
-        $url = './?_task=ttrss&_action=getArticleAttachments&id='.$_GET['id'].'&attachments='.$attachments['id'];
+        $url = './?_task=ttrss&_action=getAttachment&id='.$_GET['id'].'&attachments='.$attachments['id'];
         switch( $attachments['content_type'] )
         {
           case 'image/jpeg':
@@ -48,10 +48,7 @@ if( !allowFrame($article['link'])
       }
     } ?>
   </body>
-</html>
-<?php
-if( $this->autoread && $article['unread'] )
-  $ttrss->updateArticle($_GET['id'], 0, 2);
+</html><?php
 
 function allowFrame($url){
   $header = @get_headers($url, 1);

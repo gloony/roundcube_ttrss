@@ -4,7 +4,7 @@ if( $ttrss === false ) exit;
 
 $callback = $ttrss->getLabels();
 $items = $callback['content'];
-$keys = array_column($items, 'title');
+$keys = array_column($items, 'caption');
 array_multisort($keys, SORT_ASC, $items);
 foreach( $items as $item )
 {
