@@ -32,7 +32,11 @@ ttrss.article = {
         else if(!mode) mode = '&mode=' + 0;
         else mode = '&mode=' + mode;
       }
-      $('#trsHL' + id).toggleClass('unread');
+      switch(mode){
+        case '&mode=0': $('#trsHL' + id).removeClass('unread'); break;
+        case '&mode=1': $('#trsHL' + id).addClass('unread'); break;
+        case '&mode=2': case '': $('#trsHL' + id).toggleClass('unread'); break;
+      }
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=2' + mode })
         .done(function(html){ ttrss.tree.counters(); });
     },
@@ -85,8 +89,7 @@ ttrss.article = {
   },
   loadfunc(){
     if(rcmail.env.ttrss_autoread){
-      ttrss.article.toggle.read(ttrss.article.currentID, 0);
-      ttrss.tree.counters();
+      if($('#trsHL' + ttrss.article.currentID).hasClass('unread')) ttrss.article.toggle.read(ttrss.article.currentID, 0);
     }
   },
   next: function(){
