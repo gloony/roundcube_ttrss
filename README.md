@@ -29,8 +29,6 @@ Optimization
 
 ```
 Counter's disaply on folder view is buggy since the last update
-Auto read on display is also buggy
-When update the read status on view of article, the getCounters load multiple times
 Localization to improve and some texts was never changed from the Mail template
 ```
 
