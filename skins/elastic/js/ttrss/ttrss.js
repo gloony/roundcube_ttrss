@@ -37,4 +37,3 @@ var ttrss = {
     }
   }
 };
-rcmail.addEventListener('plugin.refresh_ttrss', function(evt){ ttrss.tree.counters(); });

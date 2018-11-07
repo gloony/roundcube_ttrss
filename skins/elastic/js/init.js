@@ -22,14 +22,7 @@ rcmail.addEventListener('init', function(evt){
 
   rcmail.register_command('select-all', ttrss.select, false);
   rcmail.register_command('select-none', ttrss.unselect, false);
-
-  // create custom button
-  // var button = $('<A>').attr('id', 'rcmSampleButton').html(rcmail.gettext('buttontitle', 'sampleplugin'));
-  // button.bind('click', function(e){ return rcmail.command('plugin.samplecmd', this); });
-  // add and register
-  // rcmail.add_element(button, 'toolbar');
-  // rcmail.register_button('plugin.samplecmd', 'rcmSampleButton', 'link');
 });
-rcmail.addEventListener('plugin.refresh_ttrss', function(evt){
-    ttrss.tree.counters();
+rcmail.addEventListener('plugin.ttrss_refresh', function(evt){
+  ttrss.tree.counters(evt.unread);
 });

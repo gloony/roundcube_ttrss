@@ -47,64 +47,66 @@ $callback = $ttrss->getHeadlines(
   true,
   'date_reverse'
 );
-foreach( $callback['content'] as $item )
+if( isset($callback['content']) && is_array($callback['content']))
 {
-  if( !empty($item['labels']) )
+  foreach( $callback['content'] as $item )
   {
-    $title = '';
-    $count = 0;
-    foreach( $item['labels'] as $label )
+    if( !empty($item['labels']) )
     {
-      if( $title !== '' )
+      $title = '';
+      $count = 0;
+      foreach( $item['labels'] as $label )
       {
-        $title .= ' - ';
-        $title .= $label[1];
-        $index = 0.2;
-        $dec1 = hexdec($color);
-        $dec2 = hexdec($label[3]);
-        $dec1 = ($dec1 < $dec2) ? $dec1^=$dec2^=$dec1^=$dec2 : $dec1;
-        $color = '#'.dechex($dec1 - ($dec1 - $dec2)*0.2);
+        if( $title !== '' )
+        {
+          $title .= ' - ';
+          $title .= $label[1];
+          $index = 0.2;
+          $dec1 = hexdec($color);
+          $dec2 = hexdec($label[3]);
+          $dec1 = ($dec1 < $dec2) ? $dec1^=$dec2^=$dec1^=$dec2 : $dec1;
+          $color = '#'.dechex($dec1 - ($dec1 - $dec2)*0.2);
+        }
+        else
+        {
+          $title = $label[1];
+          $color = $label[3];
+        }
+        $count++;
+      }
+      if( $count>1 )
+      {
+        $attachment = 'tags';
       }
       else
       {
-        $title = $label[1];
-        $color = $label[3];
+        $attachment = 'tag';
       }
-      $count++;
-    }
-    if( $count>1 )
-    {
-      $attachment = 'tags';
+      $attachment = '<span class="'.$attachment.'" title="'.$title.'" style="color:'.$color.'"></span>';
     }
     else
     {
-      $attachment = 'tag';
+      $attachment = '&nbsp;';
     }
-    $attachment = '<span class="'.$attachment.'" title="'.$title.'" style="color:'.$color.'"></span>';
-  }
-  else
-  {
-    $attachment = '&nbsp;';
-  }
-  $class = ''; $unread = '';
-  if( $item['unread']>0 )
-  {
-    $class .= ' unread';
-  }
-  if( $item['marked']>0 )
-  {
-    $class .= ' flagged';
-    $flag = 'flagged';
-  }
-  else
-  {
-    $flag = 'unflagged';
-  }
-  if( $empty )
-  {
-    $empty = false;
-  }
-  echo '    <tr id="trsHL'.$item['id'].'" class="message'.$class.'">
+    $class = ''; $unread = '';
+    if( $item['unread']>0 )
+    {
+      $class .= ' unread';
+    }
+    if( $item['marked']>0 )
+    {
+      $class .= ' flagged';
+      $flag = 'flagged';
+    }
+    else
+    {
+      $flag = 'unflagged';
+    }
+    if( $empty )
+    {
+      $empty = false;
+    }
+    echo '    <tr id="trsHL'.$item['id'].'" class="message'.$class.'">
       <td class="selection">
         <input type="checkbox" tabindex="-1">
       </td>
@@ -116,7 +118,7 @@ foreach( $callback['content'] as $item )
         </span>
         <span class="date skip-on-drag">'.date('H:i:s d/m/Y', $item['updated']).'</span>
         <span class="subject">
-          <span id="wdNS.tree" class="msgicon status" title="" onclick="ttrss.article.toggle.read(\''.$item['id'].'\'); return false;"></span>
+          <span id="wdNS.tree" class="msgicon status" title="'.$item['title'].'" onclick="ttrss.article.toggle.read(\''.$item['id'].'\'); return false;"></span>
           <a href="'.$item['link'].'" tabindex="-1" onclick="ttrss.article.load(\''.$item['id'].'\'); return false;">
             <span>'.$item['title'].'</span>
           </a>
@@ -127,6 +129,7 @@ foreach( $callback['content'] as $item )
         <span class="attachment">'.$attachment.'</span>
       </td>
     </tr>';
+  }
 }
 if( $empty )
   echo '<div class="listing-info">The list is empty.</div>';

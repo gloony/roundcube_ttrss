@@ -73,7 +73,12 @@ class ttrss extends rcube_plugin
     }
   }
   function refresh($r){
-    $this->rc->output->command('plugin.refresh_ttrss');
+    $ttrss = $this->createAPI();
+    if( $ttrss !== false )
+    {
+      $ttrssUnread = $ttrss->getUnread();
+      $this->rc->output->command('plugin.ttrss_refresh', array('unread' => $ttrssUnread['content']['unread']));
+    }
   }
 
   function index()

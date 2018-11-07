@@ -20,7 +20,7 @@ ttrss.article = {
       if(id_article!==undefined){
         id_article = id_article.substring(5);
         $.ajax({ url: './?_task=ttrss&_action=setArticleLabel&id_article=' + id_article + '&id_label=' + id_label + mode })
-          .done(function(html){ ttrss.loadLastHeadlines(); });
+          .done(function(html){ ttrss.headlines.reload(); });
       }
     },
     read: function(id, mode){

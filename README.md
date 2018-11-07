@@ -1,4 +1,4 @@
-# TTRSS on RoundCube
+# [TTRSS on RoundCube](https://github.com/gloony/roundcube_ttrss)
 
 Embed your [TTRSS](https://tt-rss.org) account into your [RoundCube](https://roundcube.net) (used the [TTRSS API](https://git.tt-rss.org/fox/tt-rss/wiki/ApiReference))
 
@@ -30,20 +30,20 @@ Optimization
 ```
 Counter's disaply on folder view is buggy since the last update
 Auto read on display is also buggy
-Notification is not implemented on ttrss task
+When update the read status on view of article, the getCounters load multiple times
 Localization to improve and some texts was never changed from the Mail template
 ```
 
 # Limitations
 
 ```
-Due to API limitation, is not possible to : 
-> Cannot create, rename or delete Label
+Due to API limitation, you : 
+> Cannot create, rename or delete label
 > Cannot create, rename or delete category
 > Cannot move Feed to another category
 > Cannot change order id of feed (for this reason, I choose to sort by alphabetic order)
 
-So for all these actions, your need to log in into your TTRSS instance and while the API doesn't change, I cannot make an update for that
+So for all these actions, your need to log in into your TTRSS instance and while the API doesn't change, I cannot change that
 ```
 
 # Screenshots

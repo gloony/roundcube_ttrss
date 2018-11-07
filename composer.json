@@ -5,7 +5,7 @@
     "keywords": ["rss","ttrss","api","feed"],
     "homepage": "https://github.com/gloony/roundcube_ttrss",
     "license": "GPL-3.0",
-    "version": "1-beta",
+    "version": "0.1-alpha",
     "authors": [
         {
             "name": "David Chardonnens",
