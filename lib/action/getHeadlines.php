@@ -113,13 +113,13 @@ if( isset($callback['content']) && is_array($callback['content']))
       <td class="subject" tabindex="0">
         <span class="fromto skip-on-drag">
           <span class="adr">
-            <span class="rcmContactAddress">'.$item['feed_title'].'</span>
+            <span class="rcmContactAddress" title="'.$item['feed_title'].'">'.$item['feed_title'].'</span>
           </span>
         </span>
         <span class="date skip-on-drag">'.date('H:i:s d/m/Y', $item['updated']).'</span>
         <span class="subject">
-          <span id="wdNS.tree" class="msgicon status" title="'.$item['title'].'" onclick="ttrss.article.toggle.read(\''.$item['id'].'\'); return false;"></span>
-          <a href="'.$item['link'].'" tabindex="-1" onclick="ttrss.article.load(\''.$item['id'].'\'); return false;">
+          <span id="wdNS.tree" class="msgicon status" onclick="ttrss.article.toggle.read(\''.$item['id'].'\'); return false;"></span>
+          <a href="'.$item['link'].'" tabindex="-1" title="'.$item['title'].'" onclick="ttrss.article.load(\''.$item['id'].'\'); return false;">
             <span>'.$item['title'].'</span>
           </a>
         </span>
