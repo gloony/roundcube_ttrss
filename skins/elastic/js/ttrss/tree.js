@@ -8,8 +8,9 @@ ttrss.tree = {
       refresh = true;
     }
     if(refresh){
+      var rmid = rcmsg.render('Count unread item(s) ...', 'loading');
       $.ajax({ url: './?_task=ttrss&_action=getCounters' })
-        .done(function(json){ ttrss.tree.countersfunc(json); });
+        .done(function(json){ rcmsg.remove(rmid); ttrss.tree.countersfunc(json); });
     }
   },
   countersfunc: function(counters){
@@ -51,7 +52,11 @@ ttrss.tree = {
     }
   },
   load: function(){
-    $('#mailboxlist').load('./?_task=ttrss&_action=getTree', ttrss.tree.loadfunc);
+    var rmid = rcmsg.render('Load tree ...', 'loading');
+    $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){
+      rcmsg.remove(rmid);
+      ttrss.tree.loadfunc();
+    });
     locStore.unset('ttrss.last.feeds');
   },
   loadfunc: function(){

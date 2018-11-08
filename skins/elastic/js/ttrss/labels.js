@@ -1,6 +1,10 @@
 ttrss.labels = {
   load: function(){
-    $('#threadselect-add ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=true', function(){ ttrss.labels.loadfunc(); });
+    var rmid = rcmsg.render('Load label(s) ...', 'loading');
+    $('#threadselect-add ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=true', function(){
+      rcmsg.remove(rmid);
+      ttrss.labels.loadfunc();
+    });
     $('#threadselect-remove ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=false');
   },
   loadfunc: function(){

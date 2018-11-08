@@ -97,6 +97,7 @@ class ttrss extends rcube_plugin
       $this->include_script($skin_path.'/js/favico.js');
       $this->include_script($skin_path.'/js/locStore.js');
       $this->include_script($skin_path.'/js/init.js');
+      $this->include_script($skin_path.'/js/rcmsg.js');
       $this->include_script($skin_path.'/js/ttrss/ttrss.js');
       $this->include_script($skin_path.'/js/ttrss/article.js');
       $this->include_script($skin_path.'/js/ttrss/feed.js');

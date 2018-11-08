@@ -19,8 +19,9 @@ ttrss.article = {
       var id_article = $('#messagelist-content tr.selected').attr('id');
       if(id_article!==undefined){
         id_article = id_article.substring(5);
+        var rmid = rcmsg.render('Update label on article(s) ...', 'loading');
         $.ajax({ url: './?_task=ttrss&_action=setArticleLabel&id_article=' + id_article + '&id_label=' + id_label + mode })
-          .done(function(html){ ttrss.headlines.reload(); });
+          .done(function(html){ rcmsg.remove(rmid); ttrss.headlines.reload(); });
       }
     },
     read: function(id, mode){
@@ -37,8 +38,9 @@ ttrss.article = {
         case '&mode=1': $('#trsHL' + id).addClass('unread'); break;
         case '&mode=2': case '': $('#trsHL' + id).toggleClass('unread'); break;
       }
+      var rmid = rcmsg.render('Mark article(s) ...', 'loading');
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=2' + mode })
-        .done(function(html){ ttrss.tree.counters(); });
+        .done(function(html){ rcmsg.remove(rmid); ttrss.tree.counters(); });
     },
     star: function(id, mode){
       if(mode===undefined) mode = '';
@@ -51,8 +53,9 @@ ttrss.article = {
       $('#trsHL' + id).toggleClass('flagged');
       $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('unflagged');
       $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('flagged');
+      var rmid = rcmsg.render('Mark article(s) ...', 'loading');
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=0' + mode })
-        .done(function(html){ ttrss.tree.counters(); });
+        .done(function(html){ rcmsg.remove(rmid); ttrss.tree.counters(); });
     }
   },
   first: function(){
@@ -84,7 +87,11 @@ ttrss.article = {
     ttrss.scrollToElement(document.getElementById('trsHL' + id), document.getElementById('messagelist-content'));
     $('#messagecontframe').attr('src', './?_task=ttrss&_action=getArticle&id=' + id);
     if(rcmail.env.ttrss_autoread)  $('#trsHL' + id).removeClass('unrea');
-    $('#messagecontframe').on('load', function(){ ttrss.article.loadfunc(); });
+    var rmid = rcmsg.render('Load article ...', 'loading');
+    $('#messagecontframe').on('load', function(){
+      rcmsg.remove(rmid);
+      ttrss.article.loadfunc();
+    });
     locStore.set('trs.last.article.feed_ids', ttrss.currentPage);
   },
   loadfunc(){
@@ -157,7 +164,27 @@ ttrss.article = {
       ttrss.headlines.page.previous();
     }
   },
-  select: function(select_all){
-    alert(select_all);
+  select: {
+    all: function(){
+		rcmail.enable_command('select-all', false);
+    },
+    unread: function(){
+
+    },
+    flagged: function(){
+
+    },
+    invert: function(){
+
+    },
+    none: function(){
+
+    },
+    toggle: function(mode){
+      rcmail.enable_command('select-all', ttrss.article.select.all(), mode);
+      rcmail.enable_command('select-unread', ttrss.article.select.unread(), mode);
+      rcmail.enable_command('select-flagged', ttrss.article.select.flagged(), mode);
+      rcmail.enable_command('select-invert', ttrss.article.select.invert(), mode);
+    }
   }
 };

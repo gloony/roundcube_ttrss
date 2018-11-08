@@ -20,8 +20,11 @@ rcmail.addEventListener('init', function(evt){
   rcmail.register_command('feed_subscribe', null, true);
   rcmail.register_command('feed_unsubscribe', null, false);
 
-  rcmail.register_command('select-all', ttrss.select, false);
-  rcmail.register_command('select-none', ttrss.unselect, false);
+  rcmail.register_command('select-all', ttrss.article.select.all(), false);
+  rcmail.register_command('select-unread', ttrss.article.select.unread(), false);
+  rcmail.register_command('select-flagged', ttrss.article.select.flagged(), false);
+  rcmail.register_command('select-invert', ttrss.article.select.invert(), false);
+  rcmail.register_command('select-none', ttrss.article.select.none(), false);
 });
 rcmail.addEventListener('plugin.ttrss_refresh', function(evt){
   ttrss.tree.counters(evt.unread);

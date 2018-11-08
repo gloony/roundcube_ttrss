@@ -6,7 +6,14 @@ ttrss.headlines = {
     if(view_mode===undefined||view_mode===null) view_mode = '';
     $('.pagenav.toolbar .pagenav-text').html('Loading');
     $('#messagelist-content').html('');
-    $('#messagelist-content').load('./?_task=ttrss&_action=getHeadlines&id=' + id + '&view_mode=' + view_mode + '&offset=' + offset + '&is_cat=' + is_cat, function(){ ttrss.headlines.loadfunc(offset); });
+    var rmid = rcmsg.render('Load headline(s) ...', 'loading');
+    $('#messagelist-content').load(
+      './?_task=ttrss&_action=getHeadlines&id=' + id + '&view_mode=' + view_mode + '&offset=' + offset + '&is_cat=' + is_cat,
+      function(){
+        rcmsg.remove(rmid);
+        ttrss.headlines.loadfunc(offset);
+      }
+    );
     locStore.set('ttrss.last.headlines', id);
     locStore.set('ttrss.last.headlines.view_mode', view_mode);
     locStore.set('ttrss.last.headlines.offset', offset);
