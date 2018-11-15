@@ -15,16 +15,35 @@ ttrss.keyboard = {
         }
       }else if(event.shiftKey){
         switch(chCode){
+          // case 33: ttrss.article.pageUp(); break //PageUP
+          // case 34: ttrss.article.pageDown(); break; //PageDown
+          // case 35: ttrss.article.last(); break; //end
+          // case 36: ttrss.article.first(); break; //home
+          // case 38: ttrss.article.previous(); break; //up
+          // case 40: ttrss.article.next(); break; //down
+          case 65: ttrss.article.select.all(); break; //a
+          case 82: ttrss.refresh(); break; //r
+          case 85: ttrss.article.toggle.read(null, 0, true); break; //u
           default: valuetoreturn = true;
         }
       }else if(event.ctrlKey){
         switch(chCode){
+          case 32: ttrss.article.focus.select(); break; //space
+          case 33: ttrss.article.focus.pageUp(); break //PageUP
+          case 34: ttrss.article.focus.pageDown(); break; //PageDown
+          case 35: ttrss.article.focus.last(); break; //end
+          case 36: ttrss.article.focus.first(); break; //home
+          case 38: ttrss.article.focus.previous(); break; //up
+          case 40: ttrss.article.focus.next(); break; //down
+          case 65: ttrss.article.select.all(); break; //a
+          case 82: ttrss.refresh(); break; //r
+          case 85: ttrss.article.toggle.read(null, 1, true); break; //u
           default: valuetoreturn = true;
         }
       }else{
         switch(chCode){
-          case 27: ttrss.article.toggle.fullscreen(false); break;
-          case 32: ttrss.article.toggle.fullscreen(); break;
+          case 27: ttrss.article.select.none(); break; //escape
+          case 32: ttrss.article.focus.open(); break; //space
           case 33: ttrss.article.pageUp(); break //PageUP
           case 34: ttrss.article.pageDown(); break; //PageDown
           case 35: ttrss.article.last(); break; //end
@@ -33,9 +52,11 @@ ttrss.keyboard = {
           case 38: ttrss.article.previous(); break; //up
           case 39: ttrss.headlines.page.next(); break; //right
           case 40: ttrss.article.next(); break; //down
+          case 65: ttrss.article.select.all(); break; //a
           case 82: ttrss.refresh(); break; //r
-          default:
-            valuetoreturn = true;
+          case 85: ttrss.article.toggle.read(null, 2, true); break; //u
+          case 122: ttrss.article.toggle.fullscreen(); break; //F11
+          default: valuetoreturn = true;
         }
       }
     }else{

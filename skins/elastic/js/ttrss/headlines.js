@@ -1,8 +1,10 @@
 ttrss.headlines = {
   load: function(id, view_mode, offset, is_cat, el){
+    ttrss.article.select.start = null;
     if(is_cat===undefined) is_cat = 'true';
     if(offset===undefined||offset===null||isNaN(offset)) offset = 1;
     ttrss.currentPage = offset;
+    if($('#mailboxlist #' + el).hasClass('unread')) view_mode = 'unread';
     if(view_mode===undefined||view_mode===null) view_mode = '';
     $('.pagenav.toolbar .pagenav-text').html('Loading');
     $('#messagelist-content').html('');
@@ -30,9 +32,15 @@ ttrss.headlines = {
         case 'previous': ttrss.article.last(); break;
       }
       ttrss.article.selectPending = null;
+    }else if(ttrss.article.focusPending){
+      ttrss.article.selectPending = null;
+    }else if($('#trsHL' + ttrss.article.currentID).length){
+      $('#trsHL' + ttrss.article.currentID).addClass('selected expended focused');
+      ttrss.scrollToElement(document.getElementById('trsHL' + ttrss.article.currentID), document.getElementById('messagelist-content'));
+    }else{
+      ttrss.article.focus.first();
     }
-    $('#trsHL' + ttrss.article.currentID).addClass('selected expended focused');
-    rcmail.enable_command('select-all', false);
+    ttrss.article.select.toggleMenu(false);
     if(page==1){
       rcmail.enable_command('firstpage', false);
       rcmail.enable_command('previouspage', false);
@@ -45,8 +53,8 @@ ttrss.headlines = {
     var offset = (limit * page) + 1;
     offset = offset - userlimit;
     var counter = $('#messagelist tbody tr').length;
-    if(counter===0) rcmail.enable_command('select-all', false);
-    else rcmail.enable_command('select-all', true);
+    if(counter===0) ttrss.article.select.toggleMenu(false);
+    else ttrss.article.select.toggleMenu(true);
     if(counter===0&&offset==1){
       $('.pagenav.toolbar .pagenav-text').html('Feeds is empty');
       rcmail.enable_command('firstpage', false);

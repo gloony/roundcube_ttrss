@@ -18,8 +18,6 @@ Go to your settings into your RoundCube instance and add a server
 ```
 Let the possibility to subscribe or unsubscribe to feeds
 Find a way to count all article by feed (and activate button last page)
-Make loading indication for pending action
-Multiselection for read, star or tag articles
 Search menu
 Sort menu
 Optimization
@@ -42,6 +40,9 @@ Due to API limitation, you :
 > Cannot change order id of feed (for this reason, I choose to sort by alphabetic order)
 
 So for all these actions, your need to log in into your TTRSS instance and while the API doesn't change, I cannot change that
+
+Because I use localStorage for store current feeds selection and more, the use of multiple instance of roundcude_ttrss can be hazardous
+But it take the advantage to let you your session when the browser is closed at the same place than before
 ```
 
 # Screenshots

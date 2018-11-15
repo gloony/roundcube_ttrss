@@ -35,8 +35,9 @@ ttrss.tree = {
             if(json[i].counter>1) body += ' unread articles';
             else body += ' unread article';
             if(Notification.permission === "granted"){
-              var notification = new Notification(title, { icon: icon, body: body });
-              notification.onclick = function(){ window.focus(); this.close(); };
+              if(ttrss.notification!==null) ttrss.notification.close();
+              ttrss.notification = new Notification(title, { icon: icon, body: body });
+              ttrss.notification.onclick = function(){ window.focus(); parent.focus(); this.close(); };
             }else Notification.requestPermission();
           }
           locStore.set('ttrss.unread.counter', json[i].counter);
