@@ -15,12 +15,12 @@ ttrss.keyboard = {
         }
       }else if(event.shiftKey){
         switch(chCode){
-          // case 33: ttrss.article.pageUp(); break //PageUP
-          // case 34: ttrss.article.pageDown(); break; //PageDown
-          // case 35: ttrss.article.last(); break; //end
-          // case 36: ttrss.article.first(); break; //home
-          // case 38: ttrss.article.previous(); break; //up
-          // case 40: ttrss.article.next(); break; //down
+          // case 33: ttrss.article.select.upper.pageUp(); break //PageUP
+          // case 34: ttrss.article.select.upper.pageDown(); break; //PageDown
+          case 35: ttrss.article.select.upper.last(); break; //end
+          case 36: ttrss.article.select.upper.first(); break; //home
+          case 38: ttrss.article.select.upper.previous(); break; //up
+          case 40: ttrss.article.select.upper.next(); break; //down
           case 65: ttrss.article.select.all(); break; //a
           case 82: ttrss.refresh(); break; //r
           case 85: ttrss.article.toggle.read(null, 0, true); break; //u

@@ -3,7 +3,7 @@
 
 body>#layout>div.content .iframe-wrapper{
   /* position: fixed; */
-  background-color: #FFFFFF;
+  background-color: #fff;
   top: 0;
   bottom: 0;
   left: 0;
@@ -63,3 +63,12 @@ body>#layout>div.content .iframe-wrapper{
 ul#mailboxlist li.label a:before{
   font-weight: 600;
   content: "\f02b"}
+
+.listing li.selected, .listing tr.selected td{
+  background-color: #ffe9d9}
+ul.treelist li.selected>div>a, ul.treelist li.selected>a{
+  background-color: #ffd4b4}
+html:not(.touch) .listing li>a:focus, html:not(.touch) .listing.focus tbody tr.focused>td:first-child, html:not(.touch) .listing.focus:not(.withselection) tbody tr.focused>td.selection+td{
+  border-left: 2px solid #ff6f00}
+.folderlist li.mailbox .unreadcount{
+  background: #ff6f00}

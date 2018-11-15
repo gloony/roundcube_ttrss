@@ -143,40 +143,46 @@ ttrss.article = {
     },
     upper: {
       click: function(id){
+        ttrss.watermark();
         if(ttrss.article.select.start===null){
           ttrss.article.select.id(id);
         }else{
-          var id, bID = false, cID = false;
-          $('#messagelist-content tr').each(function(){
-            id = $(this).attr('id'); id = id.substring(5);
-            if(id===id&&!bID&&!cID){
-              $(this).addClass('selected'); cID = true;
-            }else if(id===ttrss.article.select.start&&!bID&&!cID){
-              $(this).addClass('selected'); bID = true;
-            }else if(id===id&&bID&&!cID){
-              $(this).addClass('selected'); cID = true;
-            }else if(id===id&&!bID&&cID){
-              $(this).addClass('selected'); bID = true;
-            }else if(bID&&!cID) $(this).addClass('selected');
-            else if(!bID&&cID) $(this).addClass('selected');
-            else $(this).removeClass('selected');
-          });
+          if(id===ttrss.article.select.start){
+            $('#messagelist-content tr').removeClass('selected');
+            $('#messagelist-content tr#trsHL' + id).addClass('selected');
+          }else{
+            var tID, bID = false, cID = false;
+            $('#messagelist-content tr').each(function(){
+              tID = $(this).attr('id'); tID = tID.substring(5);
+              if(id===tID&&!bID&&!cID){
+                $(this).addClass('selected'); cID = true;
+              }else if(tID===ttrss.article.select.start&&!bID&&!cID){
+                $(this).addClass('selected'); bID = true;
+              }else if(tID===id&&bID&&!cID){
+                $(this).addClass('selected'); cID = true;
+              }else if(tID===ttrss.article.select.start&&!bID&&cID){
+                $(this).addClass('selected'); bID = true;
+              }else if(bID&&!cID) $(this).addClass('selected');
+              else if(!bID&&cID) $(this).addClass('selected');
+              else $(this).removeClass('selected');
+            });
+          }
         }
+        $('#messagelist-content tr.focused').removeClass('focused');
+        $('#messagelist-content tr#trsHL' + id).addClass('focused');
       },
       first: function(){
         var id = $('#messagelist-content tbody tr:first').attr('id');
         if(id!==undefined){
-          $('#messagelist-content tr.focused').removeClass('focused');
-          $('#messagelist-content tr#' + id).addClass('focused');
-          ttrss.scrollToElement(document.getElementById(id), document.getElementById('messagelist-content'));
+          id = id.substring(5);
+          ttrss.article.select.upper.click(id);
         }
       },
       last: function(){
         var id = $('#messagelist-content tbody tr:last').attr('id');
         if(id!==undefined){
-          $('#messagelist-content tr.focused').removeClass('focused');
-          $('#messagelist-content tr#' + id).addClass('focused');
-          ttrss.scrollToElement(document.getElementById(id), document.getElementById('messagelist-content'));
+          id = id.substring(5);
+          ttrss.article.select.upper.click(id);
         }
       },
       next: function(){
@@ -184,12 +190,9 @@ ttrss.article = {
         if(id===undefined) id = $('#messagelist-content tbody tr:first').attr('id');
         else id = $('#messagelist-content tr.focused').next('tr').attr('id');
         if(id!==undefined){
-          $('#messagelist-content tr.focused').removeClass('focused');
-          $('#messagelist-content tr#' + id).addClass('focused');
           ttrss.scrollToElement(document.getElementById(id), document.getElementById('messagelist-content'));
-        }else{
-          // ttrss.article.focusPending = 'next';
-          // ttrss.headlines.page.next();
+          id = id.substring(5);
+          ttrss.article.select.upper.click(id);
         }
       },
       previous: function(){
@@ -197,14 +200,11 @@ ttrss.article = {
         if(id===undefined) id = $('#messagelist-content tbody tr:last').attr('id');
         else id = $('#messagelist-content tr.focused').prev('tr').attr('id');
         if(id!==undefined){
-          $('#messagelist-content tr.focused').removeClass('focused');
-          $('#messagelist-content tr#' + id).addClass('focused');
           ttrss.scrollToElement(document.getElementById(id), document.getElementById('messagelist-content'));
-        }else{
-          // ttrss.article.focusPending = 'previous';
-          // ttrss.headlines.page.previous();
+          id = id.substring(5);
+          ttrss.article.select.upper.click(id);
         }
-      },
+      }
     },
     all: function(){
       $('#messagelist-content tbody tr').each(function(){
@@ -269,6 +269,7 @@ ttrss.article = {
     rcmail.enable_command('open', true);
     rcmail.enable_command('forward', true);
     ttrss.article.currentID = id;
+    ttrss.article.select.start = id;
     if(feed_ids===undefined) feed_ids = locStore.get('trs.last.article.feed_ids');
     ttrss.article.currentFeedID = feed_ids;
     locStore.set('trs.last.article.feed_ids', ttrss.currentPage);
