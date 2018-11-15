@@ -226,6 +226,12 @@ ttrss.article = {
         $(this).removeClass('selected');
       });
     },
+    checkEvent: function(){
+      $('#messagelist tr td input:checkbox').on('click', function(){
+        if($(this).prop('checked')) $(this).parent().parent().addClass('selected');
+        else $(this).parent().parent().removeClass('selected');
+      });
+    },
     toggleMenu: function(mode){
       rcmail.enable_command('select-all', mode);
       rcmail.enable_command('select-unread', mode);

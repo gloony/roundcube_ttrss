@@ -58,6 +58,8 @@ class ttrss extends rcube_plugin
       $this->register_action('getCounters', array($this, 'loadAction'));
       $this->register_action('updateArticle', array($this, 'loadAction'));
       $this->register_action('setArticleLabel', array($this, 'loadAction'));
+      $this->register_action('subscribeToFeed', array($this, 'loadAction'));
+      $this->register_action('unsubscribeFeed', array($this, 'loadAction'));
       if(!$this->rcmail->output->framed)
       {
         $this->add_button(array(

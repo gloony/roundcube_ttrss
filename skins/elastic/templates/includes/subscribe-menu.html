@@ -1,0 +1,54 @@
+<div id="listoptions-menu" class="popupmenu propform" role="dialog" aria-labelledby="aria-label-listoptions">
+	<h3 id="aria-label-listoptions" class="voice"><roundcube:label name="arialabelmessagelistoptions" /></h3>
+	<roundcube:if condition="!in_array('message_sort_col', (array)config:dont_override)" />
+	<div class="form-group row">
+		<label for="listoptions-sortcol" class="col-form-label col-sm-4"><roundcube:label name="listsorting" /></label>
+		<div class="col-sm-8">
+			<select id="listoptions-sortcol" name="sort_col">
+				<option value=""><roundcube:label name="nonesort" /></option>
+				<option value="arrival"><roundcube:label name="arrival" /></option>
+				<option value="date"><roundcube:label name="sentdate" /></option>
+				<option value="subject"><roundcube:label name="subject" /></option>
+				<option value="fromto"><roundcube:label name="fromto" /></option>
+				<option value="from"><roundcube:label name="from" /></option>
+				<option value="to"><roundcube:label name="to" /></option>
+				<option value="cc"><roundcube:label name="cc" /></option>
+				<option value="size"><roundcube:label name="size" /></option>
+			</select>
+		</div>
+	</div>
+	<roundcube:endif />
+	<roundcube:if condition="!in_array('message_sort_order', (array)config:dont_override)" />
+	<div class="form-group row">
+		<label for="listoptions-sortord" class="col-form-label col-sm-4"><roundcube:label name="listorder" /></label>
+		<div class="col-sm-8">
+			<select id="listoptions-sortord" name="sort_ord">
+				<option value="ASC"><roundcube:label name="asc" /></option>
+				<option value="DESC"><roundcube:label name="desc" /></option>
+			</select>
+		</div>
+	</div>
+	<roundcube:endif />
+	<roundcube:if condition="env:threads" />
+	<div class="form-group row">
+		<label for="listoptions-threads" class="col-form-label col-sm-4"><roundcube:label name="lmode" /></label>
+		<div class="col-sm-8">
+			<select id="listoptions-threads" name="mode">
+				<option value="list"><roundcube:label name="list" /></option>
+				<option value="threads"><roundcube:label name="threads" /></option>
+			</select>
+		</div>
+	</div>
+	<roundcube:endif />
+	<roundcube:add_label name="listoptionstitle" />
+</div>
+
+<div id="unsuscribe-menu" class="popupmenu propform" role="dialog" aria-labelledby="aria-label-listoptions">
+  <center>
+  Are you sure ?
+  <div class="ui-dialog-buttonset">
+    <button type="button" class="mainaction save btn btn-primary" onclick="ttrss.feed.subscription.remove();">Yes</button>
+    <button type="button" class="cancel btn btn-secondary">No</button>
+  </div>
+    </center>
+</div>

@@ -23,5 +23,14 @@ ttrss.feed = {
       if(cur==='') locStore.unset('ttrss.feed.expended');
       else locStore.set('ttrss.feed.expended', cur);
     }
+  },
+  subscription: {
+    add: function(){
+      UI.listoptions();
+    },
+    remove: function(){
+      
+      alert($('#mailboxlist li.selected').data('id'));
+    }
   }
 };

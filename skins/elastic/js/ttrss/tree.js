@@ -72,6 +72,8 @@ ttrss.tree = {
       }else locStore.unset('ttrss.feed.expended');
     }
     $('#mailboxlist #' + locStore.get('ttrss.last.headlines.el')).addClass('selected');
+    if($('#mailboxlist #' + locStore.get('ttrss.last.headlines.el')).hasClass('feed')) rcmail.enable_command('feed_unsubscribe', true);
+    else rcmail.enable_command('feed_unsubscribe', false);
     ttrss.tree.counters();
   }
 };

@@ -20,9 +20,11 @@ ttrss.headlines = {
     locStore.set('ttrss.last.headlines.view_mode', view_mode);
     locStore.set('ttrss.last.headlines.offset', offset);
     $('#mailboxlist .selected').removeClass('selected');
+    rcmail.enable_command('feed_unsubscribe', false);
     if(el!==undefined&&el!==null){
       locStore.set('ttrss.last.headlines.el', el);
       $('#mailboxlist #' + el).addClass('selected');
+      if($('#mailboxlist #' + locStore.get('ttrss.last.headlines.el')).hasClass('feed')) rcmail.enable_command('feed_unsubscribe', true);
     }
   },
   loadfunc: function(page){
@@ -68,6 +70,7 @@ ttrss.headlines = {
     }
     if(counter<userlimit) rcmail.enable_command('nextpage', false);
     else rcmail.enable_command('nextpage', true);
+    ttrss.article.select.checkEvent();
   },
   page:{
     first: function(){

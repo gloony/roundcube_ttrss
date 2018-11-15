@@ -17,6 +17,7 @@ rcmail.addEventListener('init', function(evt){
   rcmail.register_command('previousarticle', ttrss.article.previous, false);
   rcmail.register_command('open', ttrss.article.open, false);
   rcmail.register_command('forward', ttrss.article.forward, false);
+
   rcmail.register_command('feed_subscribe', null, true);
   rcmail.register_command('feed_unsubscribe', null, false);
 
