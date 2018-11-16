@@ -25,6 +25,8 @@ ttrss.headlines = {
       locStore.set('ttrss.last.headlines.el', el);
       $('#mailboxlist #' + el).addClass('selected');
       if($('#mailboxlist #' + locStore.get('ttrss.last.headlines.el')).hasClass('feed')) rcmail.enable_command('feed_unsubscribe', true);
+    }else{
+      $('#mailboxlist #' + locStore.get('ttrss.last.headlines.el')).addClass('selected');
     }
   },
   loadfunc: function(page){
