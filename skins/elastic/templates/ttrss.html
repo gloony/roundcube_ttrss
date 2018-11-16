@@ -28,7 +28,6 @@
       <a class="button select active" data-popup="listselect-menu" data-toggle-button="list-toggle-button" title="<roundcube:label name="select" />"><span class="inner"><roundcube:label name="select" /></span></a>
       <a class="button threads active" data-popup="threadselect-add" title="<roundcube:label name="ttrss.add_tag" />"><span class="inner"><roundcube:label name="ttrss.add" /></span></a>
       <a class="button threads active" data-popup="threadselect-remove" title="<roundcube:label name="ttrss.remove_tag" />"><span class="inner"><roundcube:label name="ttrss.remove" /></span></a>
-      <roundcube:object name="listmenulink" class="button settings active" label="options" innerclass="inner" />
       <roundcube:container name="listcontrols" id="listcontrols" />
     </div>
     <roundcube:button command="checkmail" type="link" class="button icon toolbar-button refresh" label="refresh" title="checkmail" innerclass="inner" />
@@ -84,7 +83,7 @@
   <h3 id="aria-label-mailboxoptions-menu" class="voice">Menu</h3>
   <ul class="toolbarmenu listing" role="menu" aria-labelledby="aria-label-mailboxoptions-menu">
     <roundcube:button command="feed_subscribe" type="link-menuitem" prop="page" label="ttrss.feed_subscribe" class="create disabled" classAct="create active" />
-    <roundcube:button command="feed_unsubscribe" data-popup="unsuscribe-menu" type="link-menuitem" prop="page" label="ttrss.feed_unsubscribe" class="delete disabled" classAct="delete active" />
+    <roundcube:button command="feed_unsubscribe" data-popup="unsubscribe-menu" type="link-menuitem" prop="page" label="ttrss.feed_unsubscribe" class="delete disabled" classAct="delete active" />
   </ul>
 </div>
 

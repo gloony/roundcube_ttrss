@@ -9,6 +9,12 @@ body>#layout>div.content .iframe-wrapper{
   left: 0;
   right: 0}
 
+#mailboxoptions-menu ul.toolbarmenu li a.delete.disabled{
+  display: none}
+
+#unsuscribe-menu{
+  margin-bottom: 0.4em}
+
 .message:hover #flagicnrcmrowOTE:before{
   content: "\f005"}
 .messagelist span.flagged:before{

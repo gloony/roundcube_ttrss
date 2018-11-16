@@ -51,6 +51,7 @@ class ttrss extends rcube_plugin
       $this->register_action('getUnread', array($this, 'loadAction'));
       $this->register_action('getTree', array($this, 'loadAction'));
       $this->register_action('getLabels', array($this, 'loadAction'));
+      $this->register_action('getCategories', array($this, 'loadAction'));
       $this->register_action('getHeadlines', array($this, 'loadAction'));
       $this->register_action('getArticle', array($this, 'loadAction'));
       $this->register_action('getAttachment', array($this, 'loadAction'));
@@ -102,6 +103,7 @@ class ttrss extends rcube_plugin
       $this->include_script($skin_path.'/js/rcmsg.js');
       $this->include_script($skin_path.'/js/ttrss/ttrss.js');
       $this->include_script($skin_path.'/js/ttrss/article.js');
+      $this->include_script($skin_path.'/js/ttrss/categories.js');
       $this->include_script($skin_path.'/js/ttrss/feed.js');
       $this->include_script($skin_path.'/js/ttrss/headlines.js');
       $this->include_script($skin_path.'/js/ttrss/keyboard.js');

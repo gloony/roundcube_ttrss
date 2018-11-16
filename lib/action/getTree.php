@@ -85,14 +85,14 @@ foreach( $items as $item )
     echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.' cat" aria-expanded="false" data-id="'.$item['id'].'" role="treeitem" aria-level="1"><a onclick="ttrss.headlines.load('.$item['id'].', \''.$view_mode.'\', 1, \'true\', \'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
         <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
         <ul id="subtrsCAT'.$item['id'].'" class="hidden" role="group">';
-    getFeeds($ttrss, $item['id']);
+    renderSub($ttrss, $item['id']);
     echo '        </ul>
       </li>
 ';
   }
 }
 
-function getFeeds( $ttrss, $id = null, $level = 2 )
+function renderSub( $ttrss, $id = null, $level = 2 )
 {
   if( $id === null )
   {
@@ -127,7 +127,7 @@ function getFeeds( $ttrss, $id = null, $level = 2 )
       echo $indent.'        <li id="'.$subtxt.'trsCAT'.$item['id'].'" class="'.$class.' cat" aria-expanded="false" data-id="'.$item['id'].'" role="treeitem" aria-level="1"><a onclick="ttrss.headlines.load('.$item['id'].', \'\', 1, \'true\', \''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
 '.$indent.'          <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
 '.$indent.'          <ul id="'.$subtxt.'subtrsCAT'.$item['id'].'" class="hidden" role="group">';
-      getFeeds($ttrss, $item['id'], $level + 1);
+      renderSub($ttrss, $item['id'], $level + 1);
       echo $indent.'          </ul>
 '.$indent.'      </li>
 ';

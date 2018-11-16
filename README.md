@@ -10,15 +10,16 @@ Embed your [TTRSS](https://tt-rss.org) account into your [RoundCube](https://rou
 You need a fully functional TTRSS server
 Install these content into your_roundcube_root/plugins/ttrss/
 Configure your config.inc.php to add this plugin
-Go to your settings into your RoundCube instance and add a server
+Go to your settings into your RoundCube instance and add your login and server
 ```
 
 # ToDo
 
 ```
-Let the possibility to subscribe or unsubscribe to feeds
 Sort menu
 Search menu
+Login checker on save settings
+Labels update with selection and not only one by one
 Find a way to count all article by feed (and activate button last page)
 Localization to improve and some texts was never changed from the Mail template
 Optimization
@@ -35,7 +36,7 @@ Due to API limitation, you :
 
 So for all these actions, your need to log in into your TTRSS instance and while the API doesn't change, I cannot change that
 
-Because I use localStorage for store current feeds selection and more, the use of multiple instance of roundcude_ttrss can be hazardous
+Because I use localStorage for store current feeds selection and more, the use of multiple instance of roundcude_ttrss on same browser can be hazardous
 But it take the advantage to let you your session when the browser is closed at the same place than before
 ```
 

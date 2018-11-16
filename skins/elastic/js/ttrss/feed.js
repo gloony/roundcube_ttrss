@@ -25,12 +25,40 @@ ttrss.feed = {
     }
   },
   subscription: {
-    add: function(){
-      UI.listoptions();
+    add: {
+      show: function(){
+        var content = $('#subscribe-menu'),
+            width = content.width() + 25,
+            dialog = content.clone(true);
+        $('#subscribe-cat', dialog).val(0);
+        $('select', dialog).each(function() { this.id = this.id + '-clone'; });
+        $('label', dialog).each(function() { $(this).attr('for', $(this).attr('for') + '-clone'); });
+        var save_func = function(e){
+          if (rcube_event.is_keyboard(e.originalEvent)){
+            $('#subscribe-menu').focus();
+          }
+          var url = encodeURIComponent($('#subscribe-url', dialog).val()),
+              cat = $('select[name="subcat"]', dialog).val();
+          var rmid = rcmsg.render('Subscribe to feed ...', 'loading');
+          $.ajax({ url: './?_task=ttrss&_action=subscribeToFeed&feed_url=' + url + '&category_id=' + cat })
+            .done(function(html){ rcmsg.remove(rmid); ttrss.tree.load(); });
+          return true;
+        };
+        dialog = rcmail.simple_dialog(dialog, 'Subscribe', save_func, {
+          closeOnEscape: true,
+          minWidth: 400
+        });
+      }
     },
     remove: function(){
-      
-      alert($('#mailboxlist li.selected').data('id'));
+      var id = $('#mailboxlist li.selected').data('id');
+      var rmid = rcmsg.render('Unsubscribe to feed ...', 'loading');
+      $.ajax({ url: './?_task=ttrss&_action=unsubscribeFeed&feed_id=' + id }).done(function(html){
+        rcmsg.remove(rmid);
+        locStore.unset('ttrss.last.headlines');
+        ttrss.headlines.load(0);
+        ttrss.tree.load();
+      });
     }
   }
 };

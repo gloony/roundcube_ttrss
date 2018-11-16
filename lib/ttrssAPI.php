@@ -221,7 +221,7 @@ class ttrssAPI
 
     public function subscribeToFeed( $feed_url, $category_id)
     {
-        $params = array( "sid" => $this -> t_session_id, "op" => "updateFeed", "feed_url" => $feed_url, "category_id" => $category_id);
+        $params = array( "sid" => $this -> t_session_id, "op" => "subscribeToFeed", "feed_url" => $feed_url, "category_id" => $category_id);
         $params = json_encode( $params);
         $response = $this -> t_api_query( $this->t_api_url, $params);
         if ( $response['code'] == 200) {
