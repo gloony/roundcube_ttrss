@@ -41,25 +41,25 @@ if( $urlV !== '' && $usernameV !== '' )
   $ttrss = new ttrssAPI($urlV, $usernameV, $passwdV, true);
   if( $ttrss->isLoggedIn() )
   {
-    $tester = array('title'=> 'Connection to server', 'content' => '<b style="color: #28a745">OK</b>');
+    $tester = array('title'=> rcube::Q($this->gettext('serverconnection')), 'content' => '<b style="color: #28a745">'.rcube::Q($this->gettext('ok')).'</b>');
   }
   else
   {
-    $tester = array('title'=> 'Connection to server', 'content' => '<b style="color: #dc3545">NOK</b>');
+    $tester = array('title'=> rcube::Q($this->gettext('serverconnection')), 'content' => '<b style="color: #dc3545">'.rcube::Q($this->gettext('nok')).'</b>');
   }
 }
 else
 {
-  $tester = array('title'=> 'Connection to server', 'content' => 'Not configured');
+  $tester = array('title'=> rcube::Q($this->gettext('serverconnection')), 'content' => rcube::Q($this->gettext('notconfigured')));
 }
 
 $p['blocks']['ttrss_preferences_section'] = array(
   'options' => array(
-    array('title'=> rcube::Q($this->gettext('url')), 'content' => $url->show()),
+    array('title'=> rcube::Q($this->gettext('website')), 'content' => $url->show()),
     array('title'=> rcube::Q($this->gettext('username')), 'content' => $username->show()),
     array('title'=> rcube::Q($this->gettext('password')), 'content' => $passwd->show()),
     array('title'=> rcube::Q($this->gettext('pagesize')), 'content' => $pagesize->show()),
-    array('title'=> rcube::Q($this->gettext('autoread')), 'content' => $autoread->show()),
+    array('title'=> rcube::Q($this->gettext('keepunread')), 'content' => $autoread->show()),
     $tester
   ),
   'name' => rcube::Q($this->gettext('ttrss_settings'))

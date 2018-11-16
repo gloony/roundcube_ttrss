@@ -29,11 +29,6 @@ function renderSub( $ttrss, $id, $level = 1 )
     {
       $class = 'mailbox';
       $view_mode = 'all_articles';
-      if( $item['unread'] > 0 )
-      {
-        // $class .= ' unread';
-        // $view_mode = 'unread';
-      }
       $indent = '';
       for( $i = 1; $i <= $level; $i++ )
       {

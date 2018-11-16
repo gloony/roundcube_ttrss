@@ -1,6 +1,6 @@
 ttrss.labels = {
   load: function(){
-    var rmid = rcmsg.render('Load label(s) ...', 'loading');
+    var rmid = rcmsg.render(rcmail.gettext('loadlabels', 'ttrss'), 'loading');
     $('#threadselect-add ul.toolbarmenu.listing').load('./?_task=ttrss&_action=getLabels&mode=true', function(){
       rcmsg.remove(rmid);
       ttrss.labels.loadfunc();

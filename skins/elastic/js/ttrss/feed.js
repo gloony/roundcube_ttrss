@@ -39,12 +39,12 @@ ttrss.feed = {
           }
           var url = encodeURIComponent($('#subscribe-url', dialog).val()),
               cat = $('select[name="subcat"]', dialog).val();
-          var rmid = rcmsg.render('Subscribe to feed ...', 'loading');
+          var rmid = rcmsg.render(rcmail.gettext('loadsubscribe', 'ttrss'), 'loading');
           $.ajax({ url: './?_task=ttrss&_action=subscribeToFeed&feed_url=' + url + '&category_id=' + cat })
             .done(function(html){ rcmsg.remove(rmid); ttrss.tree.load(); });
           return true;
         };
-        dialog = rcmail.simple_dialog(dialog, 'Subscribe', save_func, {
+        dialog = rcmail.simple_dialog(dialog, rcmail.gettext('subscribe', 'ttrss'), save_func, {
           closeOnEscape: true,
           minWidth: 400
         });
@@ -52,7 +52,7 @@ ttrss.feed = {
     },
     remove: function(){
       var id = $('#mailboxlist li.selected').data('id');
-      var rmid = rcmsg.render('Unsubscribe to feed ...', 'loading');
+      var rmid = rcmsg.render(rcmail.gettext('loadunsubscribe', 'ttrss'), 'loading');
       $.ajax({ url: './?_task=ttrss&_action=unsubscribeFeed&feed_id=' + id }).done(function(html){
         rcmsg.remove(rmid);
         locStore.unset('ttrss.last.headlines');

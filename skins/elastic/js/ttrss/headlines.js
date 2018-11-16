@@ -6,9 +6,9 @@ ttrss.headlines = {
     ttrss.currentPage = offset;
     if($('#mailboxlist #' + el).hasClass('unread')) view_mode = 'unread';
     if(view_mode===undefined||view_mode===null) view_mode = '';
-    $('.pagenav.toolbar .pagenav-text').html('Loading');
+    $('.pagenav.toolbar .pagenav-text').html(rcmail.gettext('loading', 'ttrss'));
     $('#messagelist-content').html('');
-    var rmid = rcmsg.render('Load headline(s) ...', 'loading');
+    var rmid = rcmsg.render(rcmail.gettext('loadheadlines', 'ttrss'), 'loading');
     $('#messagelist-content').load(
       './?_task=ttrss&_action=getHeadlines&id=' + id + '&view_mode=' + view_mode + '&offset=' + offset + '&is_cat=' + is_cat,
       function(){
@@ -61,7 +61,7 @@ ttrss.headlines = {
       $('.pagenav.toolbar .pagenav-text').html('Feeds is empty');
       rcmail.enable_command('firstpage', false);
     }else if(counter!==0){
-      $('.pagenav.toolbar .pagenav-text').html(page + ' - ' + offset + ' of ' + (offset + counter - 1));
+      $('.pagenav.toolbar .pagenav-text').html(page + ' - ' + offset + ' ' + rcmail.gettext('of', 'ttrss') + ' ' + (offset + counter - 1));
     }else if(counter===0){
       $('.pagenav.toolbar .pagenav-text').html('');
       $('messagelist-header .toolbar.listing.iconized .button.select').removeClass('active');

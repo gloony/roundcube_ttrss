@@ -9,9 +9,9 @@ function ttrss_badge(data){
       localStorage.setItem('ttrss.unread.counter', data);
       var title = 'TTRSS';
       var icon = 'plugins/ttrss/skins/elastic/asset/logo.png';
-      var body = 'You have ' + data;
-      if(data>1) body += ' unread articles';
-      else body += ' unread article';
+      var body = rcmail.gettext('youhave', 'ttrss') + ' ' + data + ' ';
+      if(data>1) body += rcmail.gettext('unreadarticles', 'ttrss');
+      else body += rcmail.gettext('unreadarticle', 'ttrss');
       if(Notification.permission === "granted"){
         var notification = new Notification(title, { icon: icon, body: body });
         notification.onclick = function(){ window.document.location.href = './?_task=ttrss'; window.focus(); this.close(); };

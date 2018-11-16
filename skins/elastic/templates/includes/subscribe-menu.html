@@ -1,10 +1,10 @@
 <div id="subscribe-menu" class="popupmenu propform" role="dialog" aria-labelledby="aria-label-subscribe-add">
   <div class="form-group row">
-    <label for="listoptions-sortcol" class="col-form-label col-sm-4">URL</label>
+    <label for="listoptions-sortcol" class="col-form-label col-sm-4"><roundcube:label name="website" /></label>
     <div class="col-sm-8">
       <input id="subscribe-url" type="text" name="suburl" />
     </div>
-    <label for="listoptions-sortcol" class="col-form-label col-sm-4">Category</label>
+    <label for="listoptions-sortcol" class="col-form-label col-sm-4"><roundcube:label name="ttrss.category" /></label>
     <div class="col-sm-8">
       <select id="subscribe-cat" name="subcat">
       </select>
@@ -14,9 +14,9 @@
 
 <div id="unsubscribe-menu" class="popupmenu propform">
   <center>
-    Are you sure ? (this cannot be undone)
+    <roundcube:label name="ttrss.areyousure" />
     <div class="ui-dialog-buttonset">
-      <button type="button" class="mainaction save btn btn-primary" onclick="ttrss.feed.subscription.remove();">Yes, remove my feed</button>
+      <button type="button" class="mainaction save btn btn-primary" onclick="ttrss.feed.subscription.remove();"><roundcube:label name="ttrss.confirmedeletefeed" /></button>
     </div>
   </center>
 </div>

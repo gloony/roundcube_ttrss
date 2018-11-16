@@ -33,7 +33,7 @@ else
 if( $this->showonlyunread )
   $view_mode = 'unread';
 
-echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="The list is empty.">';
+echo '<table id="messagelist" class="listing messagelist sortheader fixedheader focus" aria-labelledby="aria-label-messagelist" data-list="message_list" data-label-msg="'.rcube::Q($this->gettext('listempty')).'">';
 $callback = $ttrss->getHeadlines(
   $_GET['id'],
   $limit,
@@ -132,7 +132,7 @@ if( isset($callback['content']) && is_array($callback['content']))
   }
 }
 if( $empty )
-  echo '<div class="listing-info">The list is empty.</div>';
+  echo '<div class="listing-info">'.rcube::Q($this->gettext('listempty')).'</div>';
 echo '</table>';
 
 exit;

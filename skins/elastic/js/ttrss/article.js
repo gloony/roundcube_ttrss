@@ -71,7 +71,7 @@ ttrss.article = {
       var id_article = $('#messagelist-content tr.focused').attr('id');
       if(id_article!==undefined){
         id_article = id_article.substring(5);
-        var rmid = rcmsg.render('Update label on article(s) ...', 'loading');
+        var rmid = rcmsg.render(rcmail.gettext('loadupdatelabel', 'ttrss'), 'loading');
         $.ajax({ url: './?_task=ttrss&_action=setArticleLabel&id_article=' + id_article + '&id_label=' + id_label + mode })
           .done(function(html){ rcmsg.remove(rmid); ttrss.headlines.reload(); });
       }
@@ -114,7 +114,7 @@ ttrss.article = {
           case 2: case '': $('#trsHL' + id).toggleClass('unread'); break;
         }
       }
-      var rmid = rcmsg.render('Mark article(s) ...', 'loading');
+      var rmid = rcmsg.render(rcmail.gettext('loadmarkarticle', 'ttrss'), 'loading');
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=2&mode=' + mode })
         .done(function(html){ rcmsg.remove(rmid); ttrss.tree.counters(); });
     },
@@ -129,7 +129,7 @@ ttrss.article = {
       $('#trsHL' + id).toggleClass('flagged');
       $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('unflagged');
       $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('flagged');
-      var rmid = rcmsg.render('Mark article(s) ...', 'loading');
+      var rmid = rcmsg.render(rcmail.gettext('loadmarkarticle', 'ttrss'), 'loading');
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=0' + mode })
         .done(function(html){ rcmsg.remove(rmid); ttrss.tree.counters(); });
     }
@@ -286,7 +286,7 @@ ttrss.article = {
     ttrss.scrollToElement(document.getElementById('trsHL' + id), document.getElementById('messagelist-content'));
     ttrss.iswater = false;
     $('#messagecontframe').attr('src', './?_task=ttrss&_action=getArticle&id=' + id);
-    var rmid = rcmsg.render('Load article ...', 'loading');
+    var rmid = rcmsg.render(rcmail.gettext('loadarticle', 'ttrss'), 'loading');
     $('#messagecontframe').on('load', function(){
       rcmsg.remove(rmid);
       ttrss.article.loadfunc();

@@ -8,7 +8,7 @@ ttrss.tree = {
       refresh = true;
     }
     if(refresh){
-      var rmid = rcmsg.render('Count unread item(s) ...', 'loading');
+      var rmid = rcmsg.render(rcmail.gettext('loadcounters', 'ttrss'), 'loading');
       $.ajax({ url: './?_task=ttrss&_action=getCounters' })
         .done(function(json){ rcmsg.remove(rmid); ttrss.tree.countersfunc(json); });
     }
@@ -70,7 +70,7 @@ ttrss.tree = {
     }
   },
   load: function(){
-    var rmid = rcmsg.render('Load tree ...', 'loading');
+    var rmid = rcmsg.render(rcmail.gettext('loadtree', 'ttrss'), 'loading');
     $('#mailboxlist').load('./?_task=ttrss&_action=getTree', function(){
       rcmsg.remove(rmid);
       ttrss.tree.loadfunc();

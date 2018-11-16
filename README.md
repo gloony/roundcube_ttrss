@@ -19,7 +19,6 @@ Go to your settings into your RoundCube instance and add your login and server
 Search menu
 Labels and star update with selection and not only one by one
 Find a way to count all article by feed (and activate button last page)
-Localization to improve and some texts was never changed from the Mail template
 Optimization
 ```
 

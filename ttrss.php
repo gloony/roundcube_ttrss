@@ -90,6 +90,7 @@ class ttrss extends rcube_plugin
   {
     if($this->rcmail->action == 'index')
     {
+      $this->add_texts('localization/', true);
       $url = $this->rc->config->get('ttrss_url');
       $url = str_replace('http://', '', $url);
       $url = str_replace('https://', '', $url);
