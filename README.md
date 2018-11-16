@@ -8,7 +8,7 @@ Embed your [TTRSS](https://tt-rss.org) account into your [RoundCube](https://rou
 
 ```
 You need a fully functional TTRSS server
-Install these content into your_roundcube_root/plugins/ttrss/
+Install this content into your_roundcube_root/plugins/ttrss/
 Configure your config.inc.php to add this plugin
 Go to your settings into your RoundCube instance and add your login and server
 ```
@@ -18,7 +18,8 @@ Go to your settings into your RoundCube instance and add your login and server
 ```
 Search menu
 Labels and star update with selection and not only one by one
-Find a way to count all article by feed (and activate button last page)
+Find a way to count all articles by feed (and activate button last page)
+Maybe adapt the code for older skins, if there is interest from people (not plannified yet)
 Optimization
 ```
 
@@ -29,12 +30,12 @@ Due to API limitation, you :
 > Cannot create, rename or delete label
 > Cannot create, rename or delete category
 > Cannot move Feed to another category
-> Cannot change order id of feed (for this reason, I choose to sort by alphabetic order)
+> Cannot change order id of the feed (for this reason, I choose to sort by alphabetic order)
 
-So for all these actions, your need to log in into your TTRSS instance and while the API doesn't change, I cannot change that
+So for all these actions, you need to log in into your TTRSS instance, and while the API doesn't change, I cannot change that
 
-Because I use localStorage for store current feeds selection and more, the use of multiple instance of roundcude_ttrss on same browser can be hazardous
-But it take the advantage to let you your session when the browser is closed at the same place than before
+Because I use localStorage for storing current feeds selection and more, the use of multiple instance of roundcude_ttrss on same browser can be hazardous
+But it takes the advantage to let you your session when the browser is closed at the same place than before
 ```
 
 # Screenshots
