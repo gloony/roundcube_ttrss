@@ -11,24 +11,28 @@ foreach( $items as $item )
   if( $item['id']==-1 || $item['id']==-2 )
   {
     $class = 'mailbox';
-    if( $item['unread'] > 0 )
-    {
-      $class .= ' unread';
-    }
+    // if( $item['unread'] > 0 )
+    // {
+    //   $class .= ' unread';
+    // }
+    $unread = '<span class="unreadcount"></span>';
     switch( $item['id'] )
     {
       case -1:
         $nameID = 'global-unread';
-        break;
-      case -2:
-        $nameID = '-2';
-        break;
-    }
-    $unread = '<span class="unreadcount"></span>';
-    echo '      <li id="trsPrCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" data-id="'.$nameID.'" role="treeitem" aria-level="1"><a onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
+        echo '      <li id="trsPrCAT'.$item['id'].'" class="'.$class.' cat" aria-expanded="false" data-id="'.$nameID.'" role="treeitem" aria-level="1"><a onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
         <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">&nbsp;</div>
         <ul id="subtrsPrCAT'.$item['id'].'" class="hidden" role="group">
 ';
+        break;
+      case -2:
+        $nameID = '-2';
+        echo '      <li id="trsPrCAT'.$item['id'].'" class="'.$class.' cat" aria-expanded="false" data-id="'.$nameID.'" role="treeitem" aria-level="1"><a onclick="ttrss.headlines.load('.$item['id'].', \''.$view_mode.'\', 1, \'true\', \'trsPrCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
+        <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsPrCAT'.$item['id'].'\'); return false;">&nbsp;</div>
+        <ul id="subtrsPrCAT'.$item['id'].'" class="hidden" role="group">
+';
+        break;
+    }
     $callback = $ttrss->getFeeds($item['id']);
     $sitems = $callback['content'];
     if( $sitems !== null )
@@ -41,7 +45,7 @@ foreach( $items as $item )
         $class = 'mailbox';
         if( $sitem['unread'] > 0)
         {
-          $class .= ' unread';
+          // $class .= ' unread';
           // $view_mode = 'unread';
         }
         if( substr($sitem['id'], 0, 3) === '-10' )
@@ -49,8 +53,8 @@ foreach( $items as $item )
           $class .= ' label';
         }
         $unread = '<span class="unreadcount"></span>';
-        echo '          <li id="trsSpCAT'.$sitem['id'].'" class="'.$class.'" data-id="'.$sitem['id'].'" role="treeitem" aria-level="2">
-              <a onclick="ttrss.headlines.load('.$sitem['id'].', \''.$view_mode.'\', 1, \'true\', \'trsSpCAT'.$sitem['id'].'\'); return false;">'.$sitem['title'].$unread.'</a>
+        echo '          <li id="trsSpCAT'.$sitem['id'].'" class="'.$class.' aux" data-id="'.$sitem['id'].'" role="treeitem" aria-level="2">
+              <a onclick="ttrss.headlines.load('.$sitem['id'].', \''.$view_mode.'\', 1, \'false\', \'trsSpCAT'.$sitem['id'].'\'); return false;">'.$sitem['title'].$unread.'</a>
             </li>';
       }
     }
@@ -75,10 +79,10 @@ foreach( $items as $item )
     $class = 'mailbox';
     if( $item['unread'] > 0 )
     {
-      $class .= ' unread';
+      // $class .= ' unread';
     }
     $unread = '<span class="unreadcount"></span>';
-    echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" data-id="'.$item['id'].'" role="treeitem" aria-level="1"><a onclick="ttrss.headlines.load('.$item['id'].', \''.$view_mode.'\', 1, \'true\', \'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
+    echo '      <li id="trsCAT'.$item['id'].'" class="'.$class.' cat" aria-expanded="false" data-id="'.$item['id'].'" role="treeitem" aria-level="1"><a onclick="ttrss.headlines.load('.$item['id'].', \''.$view_mode.'\', 1, \'true\', \'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
         <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
         <ul id="subtrsCAT'.$item['id'].'" class="hidden" role="group">';
     getFeeds($ttrss, $item['id']);
@@ -106,7 +110,7 @@ function getFeeds( $ttrss, $id = null, $level = 2 )
       $view_mode = 'all_articles';
       if( $item['unread'] > 0 )
       {
-        $class .= ' unread';
+        // $class .= ' unread';
         // $view_mode = 'unread';
       }
       $indent = '';
@@ -120,7 +124,7 @@ function getFeeds( $ttrss, $id = null, $level = 2 )
         }
       }
       $unread = '<span class="unreadcount"></span>';
-      echo $indent.'        <li id="'.$subtxt.'trsCAT'.$item['id'].'" class="'.$class.'" aria-expanded="false" data-id="'.$item['id'].'" role="treeitem" aria-level="1"><a onclick="ttrss.headlines.load('.$item['id'].', \'\', 1, \'true\', \''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
+      echo $indent.'        <li id="'.$subtxt.'trsCAT'.$item['id'].'" class="'.$class.' cat" aria-expanded="false" data-id="'.$item['id'].'" role="treeitem" aria-level="1"><a onclick="ttrss.headlines.load('.$item['id'].', \'\', 1, \'true\', \''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">'.$item['title'].$unread.'</a>
 '.$indent.'          <div class="treetoggle collapsed" onclick="ttrss.feed.collapse(\''.$subtxt.'trsCAT'.$item['id'].'\'); return false;">&nbsp;</div>
 '.$indent.'          <ul id="'.$subtxt.'subtrsCAT'.$item['id'].'" class="hidden" role="group">';
       getFeeds($ttrss, $item['id'], $level + 1);
@@ -142,7 +146,7 @@ function getFeeds( $ttrss, $id = null, $level = 2 )
       if( $item['unread'] > 0 )
       {
         // $scounter = $item['unread'];
-        $class .= ' unread';
+        // $class .= ' unread';
         // $view_mode = 'unread';
       }
       $indent = '';
@@ -155,9 +159,8 @@ function getFeeds( $ttrss, $id = null, $level = 2 )
           $subtxt .= 'sub';
         }
       }
-      $class .= ' feed';
       $unread = '<span class="unreadcount"></span>';
-      echo $indent.'          <li id="'.$subtxt.'trsFD'.$item['id'].'" class="'.$class.'" data-id="'.$item['id'].'" role="treeitem" aria-level="'.$level.'">
+      echo $indent.'          <li id="'.$subtxt.'trsFD'.$item['id'].'" class="'.$class.' feed" data-id="'.$item['id'].'" role="treeitem" aria-level="'.$level.'">
 '.$indent.'            <a data-type="folder" data-path="'.$path.$item['name'].'" onclick="ttrss.headlines.load('.$item['id'].', \''.$view_mode.'\', 1, \'false\', \''.$subtxt.'trsFD'.$item['id'].'\');return false;">'.$item['title'].$unread.'</a>
 '.$indent.'          </li>
 ';

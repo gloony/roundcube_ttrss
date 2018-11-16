@@ -17,17 +17,11 @@ Go to your settings into your RoundCube instance and add a server
 
 ```
 Let the possibility to subscribe or unsubscribe to feeds
-Find a way to count all article by feed (and activate button last page)
-Search menu
 Sort menu
-Optimization
-```
-
-# Bugs
-
-```
-Counter's disaply on folder view is buggy since the last update
+Search menu
+Find a way to count all article by feed (and activate button last page)
 Localization to improve and some texts was never changed from the Mail template
+Optimization
 ```
 
 # Limitations
