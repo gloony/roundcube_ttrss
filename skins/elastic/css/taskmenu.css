@@ -17,5 +17,3 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis}}
-.listing.iconized tr.ttrss>td.section:before{
-  content: "\f09e"}

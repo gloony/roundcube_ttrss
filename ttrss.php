@@ -26,6 +26,7 @@ class ttrss extends rcube_plugin
     }
     elseif($this->rc->task == 'settings')
     {
+      $this->include_stylesheet($this->local_skin_path().'/css/settings.css');
       $this->add_hook('preferences_sections_list', array($this, 'ttrss_preferences_sections_list'));
       $this->add_hook('preferences_list', array($this, 'ttrss_preferences_list'));
       $this->add_hook('preferences_save', array($this, 'ttrss_preferences_save'));
@@ -75,7 +76,8 @@ class ttrss extends rcube_plugin
       }
     }
   }
-  function refresh($r){
+  function refresh( $r )
+  {
     $ttrss = $this->createAPI();
     if( $ttrss !== false )
     {
@@ -127,11 +129,19 @@ class ttrss extends rcube_plugin
     $encryption = new ttrss\encryption($this->rcmail);
     require_once __DIR__ . '/lib/ttrssAPI.php';
     $username = $this->rc->config->get('ttrss_username');
-    if($username!==null)
+    if( $this->rc->config->get('ttrss_url') !== null && $username !== null )
     {
       $url = $this->rc->config->get('ttrss_url').'api/';
       $passwd = $encryption->decrypt($this->rc->config->get('ttrss_passwd'));
-      return new ttrssAPI($url, $username, $passwd);
+      $ttrss = new ttrssAPI($url, $username, $passwd);
+      if( $ttrss->isLoggedIn() )
+      {
+        return $ttrss;
+      }
+      else
+      {
+        return false;
+      }
     }
     else
     {

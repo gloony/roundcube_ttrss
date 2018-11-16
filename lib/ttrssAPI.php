@@ -17,13 +17,12 @@ class ttrssAPI
     private $t_api_url;
     private $t_session_id;
 
-    public function __construct( $url, $username, $password)
+    public function __construct( $url, $username, $password, $forceLogin = false)
     {
         $this -> t_api_url = $url;
-        if(isset($_SESSION['rc_ttrss_sid'])){
+        if(isset($_SESSION['rc_ttrss_sid'])&&$_SESSION['rc_ttrss_sid']!==null&&!$forceLogin){
             $this -> t_session_id = $_SESSION['rc_ttrss_sid'];
-            $return = $this->isLoggedIn();
-            if(!$return['content']['status']) $this -> t_login( $username, $password);
+            if(!$this->isLoggedIn()) $this -> t_login( $username, $password);
         }else{
             $this -> t_login( $username, $password);
         }
@@ -33,6 +32,7 @@ class ttrssAPI
     {
         $params = array( "op" => "login", "user" => $username, "password" => $password);
         $params = json_encode( $params);
+		$_SESSION['rc_ttrss_sid'] = null;
         $response = $this -> t_api_query( $this->t_api_url, $params);
         if ( $response['code'] == 200) {
             $tarray = json_decode( $response['text'], true);
@@ -204,7 +204,7 @@ class ttrssAPI
         $response = $this -> t_api_query( $this->t_api_url, $params);
         if ( $response['code'] == 200) {
             $tarray = json_decode( $response['text'], true);
-            return $tarray;
+            return $tarray['content']['status'];
         } else return false;
     }
 

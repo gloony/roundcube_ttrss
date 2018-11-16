@@ -1,11 +1,12 @@
 <?php
+require_once __DIR__ . '/../encryption.php';
+$encryption = new ttrss\encryption($this->rcmail);
+
 $urlV = rcube_utils::get_input_value('ttrss_url', rcube_utils::INPUT_POST);
 $usernameV = rcube_utils::get_input_value('ttrss_username', rcube_utils::INPUT_POST);
 $passwdV = rcube_utils::get_input_value('ttrss_passwd', rcube_utils::INPUT_POST);
 $pagesizeV = rcube_utils::get_input_value('ttrss_pagesize', rcube_utils::INPUT_POST);
 $autoreadV = rcube_utils::get_input_value('ttrss_autoread', rcube_utils::INPUT_POST);
-$autoreadV = rcube_utils::get_input_value('ttrss_autoread', rcube_utils::INPUT_POST);
-$showonlyunreadV = rcube_utils::get_input_value('ttrss_showonlyunread', rcube_utils::INPUT_POST);
 $url = new html_inputfield(array(
   'name' => 'ttrss_url',
   'type' => 'text',
@@ -19,20 +20,39 @@ $username = new html_inputfield(array(
 ));
 $passwd = new html_inputfield(array(
   'name' => 'ttrss_passwd',
-  'type' => 'password', 'autocomplete' => 'off', 'value' => '', 'size' => 255
+  'type' => 'password', 'autocomplete' => 'off',
+  'value' => $passwdV != '' ? $passwdV : $encryption->decrypt($this->rc->config->get('ttrss_passwd')), 'size' => 255
 ));
 $pagesize = new html_inputfield(array(
   'name' => 'ttrss_pagesize',
-  'type' => 'text', 'autocomplete' => 'off', 'value' => $pagesizeV != '' ? $pagesizeV : $this->rc->config->get('ttrss_pagesize'), 'size' => 255
+  'type' => 'text', 'autocomplete' => 'off', 'value' => $pagesizeV != '' ? $pagesizeV : $this->rc->config->get('ttrss_pagesize'), 'size' => 3
 ));
 $autoread = new html_inputfield(array(
   'name' => 'ttrss_autoread',
   'type' => 'checkbox', 'checked' => $autoreadV != '' ? $autoreadV : $this->rc->config->get('ttrss_autoread')
 ));
-$showonlyunread = new html_inputfield(array(
-  'name' => 'ttrss_showonlyunread',
-  'type' => 'checkbox', 'checked' => $showonlyunreadV != '' ? $showonlyunreadV : $this->rc->config->get('ttrss_showonlyunread')
-));
+
+if( $urlV !== '' && $usernameV !== '' )
+{
+  require_once __DIR__ . '/../ttrssAPI.php';
+  $urlV = $urlV != '' ? $urlV : $this->rc->config->get('ttrss_url'); $urlV .= 'api/';
+  $usernameV = $usernameV != '' ? $usernameV : $this->rc->config->get('ttrss_username');
+  $passwdV = $passwdV != '' ? $passwdV : $encryption->decrypt($this->rc->config->get('ttrss_passwd'));
+  $ttrss = new ttrssAPI($urlV, $usernameV, $passwdV, true);
+  if( $ttrss->isLoggedIn() )
+  {
+    $tester = array('title'=> 'Connection to server', 'content' => '<b style="color: #28a745">OK</b>');
+  }
+  else
+  {
+    $tester = array('title'=> 'Connection to server', 'content' => '<b style="color: #dc3545">NOK</b>');
+  }
+}
+else
+{
+  $tester = array('title'=> 'Connection to server', 'content' => 'Not configured');
+}
+
 $p['blocks']['ttrss_preferences_section'] = array(
   'options' => array(
     array('title'=> rcube::Q($this->gettext('url')), 'content' => $url->show()),
@@ -40,7 +60,7 @@ $p['blocks']['ttrss_preferences_section'] = array(
     array('title'=> rcube::Q($this->gettext('password')), 'content' => $passwd->show()),
     array('title'=> rcube::Q($this->gettext('pagesize')), 'content' => $pagesize->show()),
     array('title'=> rcube::Q($this->gettext('autoread')), 'content' => $autoread->show()),
-    array('title'=> rcube::Q($this->gettext('showonlyunread')), 'content' => $showonlyunread->show())
+    $tester
   ),
   'name' => rcube::Q($this->gettext('ttrss_settings'))
 );
