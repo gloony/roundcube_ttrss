@@ -68,7 +68,7 @@ ttrss.article = {
         else if(!mode) mode = '&mode=' + 0;
         else mode = '&mode=' + mode;
       }
-      var id_article = $('#messagelist-content tr.expended').attr('id');
+      var id_article = $('#messagelist-content tr.focused').attr('id');
       if(id_article!==undefined){
         id_article = id_article.substring(5);
         var rmid = rcmsg.render('Update label on article(s) ...', 'loading');
