@@ -31,7 +31,7 @@ class ttrss extends rcube_plugin
       $this->add_hook('preferences_list', array($this, 'ttrss_preferences_list'));
       $this->add_hook('preferences_save', array($this, 'ttrss_preferences_save'));
     }
-    if($this->rc->task != 'ttrss')
+    if($this->rc->task != 'ttrss' && $this->rc->task != 'login')
     {
       $this->include_script($this->local_skin_path().'/js/taskmenu.js');
     }
