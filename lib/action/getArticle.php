@@ -13,7 +13,7 @@ if( !allowFrame($article['link'])
   <head>
     <title><?php echo $article['title']; ?></title>
     <link rel="stylesheet" href="skins/elastic/styles/styles.css?s=1535618602">
-    <link rel="stylesheet" href="plugins/ttrss/css/article.css?s=1535544692">
+    <link rel="stylesheet" href="plugins/ttrss/skins/elastic/css/article.css?s=1535544692">
   </head>
   <body>
     <h2>
