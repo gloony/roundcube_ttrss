@@ -60,7 +60,8 @@ ttrss.article = {
       if(force) $('body>#layout>div.content .iframe-wrapper').css('position', 'fixed');
       else $('body>#layout>div.content .iframe-wrapper').css('position', 'initial');
     },
-    label: function(id_label, mode){
+    label: function(id_label, mode, selected){
+      if(selected===undefined) selected = true;
       if(mode===undefined) mode = '';
       else{
         if(mode===null) mode = '';
@@ -68,12 +69,27 @@ ttrss.article = {
         else if(!mode) mode = '&mode=' + 0;
         else mode = '&mode=' + mode;
       }
-      var id_article = $('#messagelist-content tr.focused').attr('id');
-      if(id_article!==undefined){
+      if(selected){
+        var tid, id_article = '';
+        $('#messagelist-content tr.selected').each(function(){
+          if(id_article!=='') id_article += ',';
+          tid = $(this).attr('id');
+          tid = tid.substring(5);
+          id_article += tid;
+          // switch(mode){
+          //   case 0: $(this).removeClass('unread'); break;
+          //   case 1: $(this).addClass('unread'); break;
+          //   case 2: case '': $(this).toggleClass('unread'); break;
+          // }
+        });
+      }else{
+        var id_article = $('#messagelist-content tr.focused').attr('id');
         id_article = id_article.substring(5);
+      }
+      if(id_article!==undefined&&id_article!==''){
         var rmid = rcmsg.render(rcmail.gettext('loadupdatelabel', 'ttrss'), 'loading');
         $.ajax({ url: './?_task=ttrss&_action=setArticleLabel&id_article=' + id_article + '&id_label=' + id_label + mode })
-          .done(function(html){ rcmsg.remove(rmid); ttrss.headlines.reload(); });
+          .done(function(html){ rcmsg.remove(rmid); ttrss.tree.counters(); ttrss.headlines.reload(); });
       }
     },
     read: function(id, mode, selected){
@@ -118,17 +134,50 @@ ttrss.article = {
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=2&mode=' + mode })
         .done(function(html){ rcmsg.remove(rmid); ttrss.tree.counters(); });
     },
-    star: function(id, mode){
-      if(mode===undefined) mode = '';
-      else{
-        if(mode===null) mode = '';
-        else if(mode) mode = '&mode=' + 1;
-        else if(!mode) mode = '&mode=' + 0;
-        else mode = '&mode=' + mode;
+    star: function(id, mode, selected){
+      if(selected===undefined) selected = true;
+      if(id===undefined||id===null||id==='') selected = true;
+      else if(selected&&!$('#trsHL' + id).hasClass('selected')) selected = false;
+      if(selected===undefined) selected = true;
+      if(mode===undefined||mode===null||mode===''||mode===2){
+        if(selected){
+          id = $('#messagelist-content tr.selected').attr('id');
+          id = id.substring(5);
+          if($('#trsHL' + id).hasClass('flagged')) mode = false;
+          else mode = true;
+        }else{
+          mode = null;
+        }
       }
-      $('#trsHL' + id).toggleClass('flagged');
-      $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('unflagged');
-      $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('flagged');
+      if(mode===null) mode = '';
+      else if(mode) mode = '&mode=' + 1;
+      else if(!mode) mode = '&mode=' + 0;
+      else mode = '&mode=' + mode;
+      if(selected){
+        var tid; id = '';
+        $('#messagelist-content tr.selected').each(function(){
+          if(id!=='') id += ',';
+          tid = $(this).attr('id');
+          tid = tid.substring(5);
+          id += tid;
+          switch(mode){
+            case '&mode=1':
+              $('#trsHL' + tid).addClass('flagged');
+              $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').removeClass('unflagged');
+              $('#trsHL' + tid + ' .flag #flagicnrcmrowOTE').addClass('flagged');
+              break;
+            case '&mode=0':
+              $('#trsHL' + tid).removeClass('flagged');
+              $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').addClass('unflagged');
+              $('#trsHL' + tid + ' .flag #flagicnrcmrowOTE').removeClass('flagged');
+              break;
+          }
+        });
+      }else{
+        $('#trsHL' + id).toggleClass('flagged');
+        $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('unflagged');
+        $('#trsHL' + id + ' .flag #flagicnrcmrowOTE').toggleClass('flagged');
+      }
       var rmid = rcmsg.render(rcmail.gettext('loadmarkarticle', 'ttrss'), 'loading');
       $.ajax({ url: './?_task=ttrss&_action=updateArticle&id=' + id + '&field=0' + mode })
         .done(function(html){ rcmsg.remove(rmid); ttrss.tree.counters(); });

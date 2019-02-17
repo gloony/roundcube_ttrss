@@ -17,7 +17,7 @@ Go to your settings into your RoundCube instance and add your login and server
 
 ```
 Search menu
-Labels and star update with selection and not only one by one
+Not refresh headlines on update a label on articles
 Find a way to count all articles by feed (and activate button last page)
 Maybe adapt the code for older skins, if there is interest from people (not plannified yet)
 Optimization

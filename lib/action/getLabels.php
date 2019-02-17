@@ -13,7 +13,7 @@ foreach( $items as $item )
     continue;
   }
   echo '<li role="menuitem">
-  <a class="expand all active" id="trsLBL'.$item['id'].'" role="button" tabindex="-1" aria-disabled="false" onclick="ttrss.article.toggle.label('.$item['id'].', '.$_GET['mode'].'); return false;" style="color:'.$item['bg_color'].'">
+  <a class="expand all active" id="trsLBL'.$item['id'].'" role="button" tabindex="-1" aria-disabled="false" onclick="ttrss.article.toggle.label('.$item['id'].', '.$_GET['mode'].', true); return false;" style="color:'.$item['bg_color'].'">
 <span style="color: initial">'.$item['caption'].'</span>
   </a>
 </li>

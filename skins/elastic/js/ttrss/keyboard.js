@@ -23,6 +23,7 @@ ttrss.keyboard = {
           case 40: ttrss.article.select.upper.next(); break; //down
           case 65: ttrss.article.select.all(); break; //a
           case 82: ttrss.refresh(); break; //r
+          case 83: ttrss.article.toggle.star(null, null, true)(); break; //s
           case 85: ttrss.article.toggle.read(null, 0, true); break; //u
           default: valuetoreturn = true;
         }
@@ -37,12 +38,16 @@ ttrss.keyboard = {
           case 40: ttrss.article.focus.next(); break; //down
           case 65: ttrss.article.select.all(); break; //a
           case 82: ttrss.refresh(); break; //r
+          case 83: ttrss.article.toggle.star(null, null, true)(); break; //s
           case 85: ttrss.article.toggle.read(null, 1, true); break; //u
           default: valuetoreturn = true;
         }
       }else{
         switch(chCode){
-          case 27: ttrss.article.select.none(); break; //escape
+          case 27: //escape
+            if(ttrss.iswater) ttrss.article.select.none();
+            else ttrss.watermark();
+            break;
           case 32: ttrss.article.focus.open(); break; //space
           case 33: ttrss.article.pageUp(); break //PageUP
           case 34: ttrss.article.pageDown(); break; //PageDown
@@ -54,6 +59,7 @@ ttrss.keyboard = {
           case 40: ttrss.article.next(); break; //down
           case 65: ttrss.article.select.all(); break; //a
           case 82: ttrss.refresh(); break; //r
+          case 83: ttrss.article.toggle.star(null, null, true)(); break; //s
           case 85: ttrss.article.toggle.read(null, 2, true); break; //u
           case 122: ttrss.article.toggle.fullscreen(); break; //F11
           default: valuetoreturn = true;

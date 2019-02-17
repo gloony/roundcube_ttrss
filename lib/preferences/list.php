@@ -21,7 +21,7 @@ $username = new html_inputfield(array(
 $passwd = new html_inputfield(array(
   'name' => 'ttrss_passwd',
   'type' => 'password', 'autocomplete' => 'off',
-  'value' => $passwdV != '' ? $passwdV : $encryption->decrypt($this->rc->config->get('ttrss_passwd')), 'size' => 255
+  'value' => '' // $passwdV != '' ? $passwdV : $encryption->decrypt($this->rc->config->get('ttrss_passwd')), 'size' => 255
 ));
 $pagesize = new html_inputfield(array(
   'name' => 'ttrss_pagesize',

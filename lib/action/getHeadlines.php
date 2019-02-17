@@ -125,7 +125,7 @@ if( isset($callback['content']) && is_array($callback['content']))
         </span>
       </td>
       <td class="flags">
-        <span class="flag"><span id="flagicnrcmrowOTE" class="'.$flag.'" onclick="ttrss.article.toggle.star(\''.$item['id'].'\'); return false;"></span></span>
+        <span class="flag"><span id="flagicnrcmrowOTE" class="'.$flag.'" onclick="ttrss.article.toggle.star(\''.$item['id'].'\', null, true); return false;"></span></span>
         <span class="attachment">'.$attachment.'</span>
       </td>
     </tr>';

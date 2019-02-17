@@ -24,10 +24,10 @@ ttrss.tree = {
         if(json[i].counter!==locStore.get('ttrss.unread.counter')){
           ttrss.favico.badge(json[i].counter);
           if(json[i].counter!==0){
-            // $(".button-ttrss").attr('data-badge', json[i].counter);
+            $(".button-ttrss").attr('data-badge', json[i].counter);
             document.title = "(" + json[i].counter + ") " + ttrss.nameurl;
           }else{
-            // $(".button-ttrss").attr('data-badge', null);
+            $(".button-ttrss").attr('data-badge', null);
             document.title = ttrss.nameurl;
           }
           if(json[i].counter>locStore.get('ttrss.unread.counter')){

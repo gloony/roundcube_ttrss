@@ -1,8 +1,6 @@
 #taskmenu a.ttrss:before{
   content:"\f09e"}
 @media screen and (min-width: 481px){
-  #taskmenu .button-ttrss.selected.button{
-    color:#ff6f00}
   #taskmenu .button-ttrss[data-badge]:after {
     margin-left: -5.2em;
     margin-top: 2em;
@@ -16,4 +14,5 @@
     height: 14px;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis}}
+    text-overflow: ellipsis;
+  }}
