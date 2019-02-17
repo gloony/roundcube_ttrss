@@ -1,11 +1,17 @@
 ttrss.tree = {
   icount: 0,
-  counters: function(count){
+  counters: function(count, refreshner){
+    if(refreshner===undefined) refreshner = false;
     var refresh = false;
     if(count===undefined) refresh = true;
     else if(ttrss.tree.icount!=count){
       ttrss.tree.icount = count;
       refresh = true;
+      if(refreshner){
+        if(locStore.get('ttrss.last.headlines')=='-3'){
+          if(ttrss.iswater) ttrss.headlines.reload();
+        }
+      }
     }
     if(refresh){
       var rmid = rcmsg.render(rcmail.gettext('loadcounters', 'ttrss'), 'loading');

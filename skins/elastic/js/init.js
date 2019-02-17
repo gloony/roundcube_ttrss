@@ -29,5 +29,5 @@ rcmail.addEventListener('init', function(evt){
   rcmail.register_command('select-none', ttrss.article.select.none, false);
 });
 rcmail.addEventListener('plugin.ttrss_refresh', function(evt){
-  ttrss.tree.counters(evt.unread);
+  ttrss.tree.counters(evt.unread, true);
 });
