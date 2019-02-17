@@ -1,5 +1,9 @@
 #taskmenu a.ttrss:before{
   content:"\f09e"}
+@media screen and (max-width: 480px){
+  #taskmenu .button-ttrss[data-badge]:after {
+    content: attr(data-badge);
+    color: #b1b1b1}}
 @media screen and (min-width: 481px){
   #taskmenu .button-ttrss[data-badge]:after {
     margin-left: -5.2em;
