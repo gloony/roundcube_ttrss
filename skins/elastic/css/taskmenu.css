@@ -2,6 +2,7 @@
   content:"\f09e"}
 @media screen and (max-width: 480px){
   #taskmenu .button-ttrss[data-badge]:after {
+    font-size: 0.98rem;
     margin-left: 1rem;
     content: attr(data-badge);
     color: #b1b1b1}}
