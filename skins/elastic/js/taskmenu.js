@@ -25,5 +25,4 @@ function ttrss_badge(data){
   }
 }
 
-rcmail.addEventListener('init', function(evt){ rcmail.refresh(); });
 rcmail.addEventListener('plugin.ttrss_refresh', function(evt){ ttrss_badge(evt.unread); });

@@ -85,7 +85,6 @@ class ttrss extends rcube_plugin
       $this->rc->output->command('plugin.ttrss_refresh', array('unread' => $ttrssUnread['content']['unread']));
     }
   }
-
   function index()
   {
     if($this->rcmail->action == 'index')

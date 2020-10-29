@@ -4,27 +4,35 @@
 <h1 class="voice"><roundcube:label name="ttrss.ttrss" /></h1>
 
 <!-- folders list -->
-<div class="sidebar listbox" role="navigation" aria-labelledby="aria-label-folderlist">
-  <div class="header">
-    <a class="button icon back-list-button" href="#back"><span class="inner"><roundcube:label name="back" /></span></a>
-    <span class="header-title username"><roundcube:var name="env:ttrss_header_title" /></span>
-    <roundcube:button name="folderactions" type="link" title="folderactions" label="actions"
-                      class="button icon sidebar-menu" innerclass="inner" data-popup="mailboxoptions-menu" />
-  </div>
-  <h2 id="aria-label-folderlist" class="voice"><roundcube:label name="arialabelfolderlist" /></h2>
-  <div id="folderlist-content" class="scroller">
-    <ul id="mailboxlist" class="treelist listing folderlist" role="tree">
-    </ul>
-  </div>
+<div id="layout-sidebar" class="sidebar listbox" role="navigation" aria-labelledby="aria-label-folderlist">
+	<div class="header">
+		<a class="button icon back-list-button" href="#back"><span class="inner"><roundcube:label name="back" /></span></a>
+		<span class="header-title username"><roundcube:object name="username" /></span>
+		<roundcube:button name="folderactions" type="link" title="folderactions" label="actions"
+			class="button icon sidebar-menu" innerclass="inner" data-popup="mailboxoptions-menu" />
+	</div>
+	<h2 id="aria-label-folderlist" class="voice"><roundcube:label name="arialabelfolderlist" /></h2>
+	<div id="folderlist-content" class="scroller">
+    <ul id="mailboxlist" class="treelist listing folderlist" role="tree"></ul>
+		<roundcube:object name="mailboxlist" id="mailboxlist" class="treelist listing folderlist" folder_filter="mail" unreadwrap="%s" />
+	</div>
+	<div class="footer small">
+		<roundcube:if condition="env:quota" />
+			<div id="quotadisplay" class="quota-widget">
+				<span class="voice"><roundcube:label name="quota"></span>
+				<roundcube:object name="quotaDisplay" class="count" display="text" />
+			</div>
+		<roundcube:endif />
+	</div>
 </div>
 
 <!-- messages list -->
-<div class="list listbox selected">
+<div id="layout-list" class="layout-list listbox selected">
   <div id="messagelist-header" class="header">
-    <a class="button icon menu-button" href="#menu"><span class="inner"><roundcube:label name="menu" /></span></a>
-    <a class="button icon back-sidebar-button folders" href="#sidebar"><span class="inner"><roundcube:label name="mailboxlist" /></span></a>
+		<a class="button icon task-menu-button" href="#menu"><span class="inner"><roundcube:label name="menu" /></span></a>
+		<a class="button icon back-sidebar-button folders" href="#sidebar"><span class="inner"><roundcube:label name="mailboxlist" /></span></a>
     <span class="header-title"></span>
-    <div class="toolbar" role="toolbar">
+    <div class="toolbar menu" role="toolbar">
       <a class="button select active" data-popup="listselect-menu" data-toggle-button="list-toggle-button" title="<roundcube:label name="select" />"><span class="inner"><roundcube:label name="select" /></span></a>
       <a class="button threads active" data-popup="threadselect-add" title="<roundcube:label name="ttrss.add_tag" />"><span class="inner"><roundcube:label name="ttrss.add" /></span></a>
       <a class="button threads active" data-popup="threadselect-remove" title="<roundcube:label name="ttrss.remove_tag" />"><span class="inner"><roundcube:label name="ttrss.remove" /></span></a>
@@ -40,7 +48,7 @@
       </tbody>
     </table>
   </div>
-  <div class="pagenav toolbar footer small" role="toolbar">
+  <div class="pagenav menu toolbar footer small" role="toolbar">
     <roundcube:button command="firstpage" type="link"
                       class="button firstpage disabled" classAct="button firstpage"
                       title="firstpage" label="first" innerclass="inner" />
@@ -60,7 +68,7 @@
 </div>
 
 <!-- message preview -->
-<div class="content">
+<div id="layout-content" class="content">
   <h2 id="aria-label-toolbar" class="voice"><roundcube:label name="arialabeltoolbar" /></h2>
   <div class="header" role="toolbar" aria-labelledby="aria-label-toolbar">
     <a class="button icon back-list-button" href="#back"><span class="inner"><roundcube:label name="back" /></span></a>
@@ -69,12 +77,20 @@
   </div>
   <h2 id="aria-label-mailpreviewframe" class="voice"><roundcube:label name="arialabelmailpreviewframe" /></h2>
   <div class="iframe-wrapper">
+    <div id="iframe-fullscreen-close-button" class="hidden" onclick="ttrss.article.toggle.fullscreen(false);"></div>
     <roundcube:object name="contentframe"
                       id="messagecontframe"
                       aria-labelledby="aria-label-mailpreviewframe"
                       src="./plugins/ttrss/skins/elastic/templates/watermark.html"
                       title="arialabelmailpreviewframe"
                       />
+  </div>
+  <div class="footer menu toolbar content-frame-navigation">
+  <roundcube:button type="link" command="previousarticle" label="previous" class="button prevpage disabled" classAct="button prevpage active" data-hidden="small" />
+    <span class="buttons">
+      <roundcube:button type="link" command="open" label="openinextwin" class="button extwin disabled" classAct="button extwin active" data-hidden="small" />
+    </span>
+  <roundcube:button type="link" command="nextarticle" label="next" class="button nextpage disabled" classAct="button nextpage active" data-hidden="small" />
   </div>
 </div>
 

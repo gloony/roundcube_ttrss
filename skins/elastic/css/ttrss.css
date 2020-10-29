@@ -9,6 +9,36 @@ body>#layout>div.content .iframe-wrapper{
   left: 0;
   right: 0}
 
+#messagecontframe {
+  height: 100% !important}
+
+#iframe-fullscreen-close-button {
+  cursor: pointer;
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  right: 0}
+
+#iframe-fullscreen-close-button:before {
+  content: "\f057"}
+
+#iframe-fullscreen-close-button:before {
+  font-size: 1.25em;
+  display: block;
+  float: left;
+  margin: 0 .25rem 0 0;
+  width: 1.18em;
+  height: 1em;
+  font-family: 'Icons';
+  font-style: normal;
+  font-weight: 900;
+  text-decoration: inherit;
+  text-align: center;
+  speak: none;
+  font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased}
+
 #mailboxoptions-menu ul.toolbarmenu li a.delete.disabled{
   display: none}
 

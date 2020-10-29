@@ -1,5 +1,9 @@
 body{
+  height: initial;
   overflow: initial}
+
+img{
+  max-width: 100%}
 
 a#rssHeadArticleLink{
   text-decoration: none;

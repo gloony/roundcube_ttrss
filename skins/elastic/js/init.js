@@ -31,3 +31,4 @@ rcmail.addEventListener('init', function(evt){
 rcmail.addEventListener('plugin.ttrss_refresh', function(evt){
   ttrss.tree.counters(evt.unread, true);
 });
+rcmail.addEventListener('init', function(evt){ rcmail.refresh(); });

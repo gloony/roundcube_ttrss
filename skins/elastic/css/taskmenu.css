@@ -8,8 +8,8 @@
     color: #b1b1b1}}
 @media screen and (min-width: 481px){
   #taskmenu .button-ttrss[data-badge]:after {
-    margin-left: -5.2em;
-    margin-top: 2em;
+    /* margin-left: 0.8rem; */
+    /* margin-top: 1.8em; */
     position: absolute;
     font-size: .7em;
     content: attr(data-badge);

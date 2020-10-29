@@ -57,8 +57,13 @@ ttrss.article = {
   toggle: {
     fullscreen: function(force){
       if(force===undefined) force = !($('body>#layout>div.content .iframe-wrapper').css('position')=='fixed');
-      if(force) $('body>#layout>div.content .iframe-wrapper').css('position', 'fixed');
-      else $('body>#layout>div.content .iframe-wrapper').css('position', 'initial');
+      if(force){
+        $('#iframe-fullscreen-close-button').removeClass('hidden');
+        $('body>#layout>div.content .iframe-wrapper').css('position', 'fixed');
+      }else{
+        $('#iframe-fullscreen-close-button').addClass('hidden');
+        $('body>#layout>div.content .iframe-wrapper').css('position', 'initial');
+      }
     },
     label: function(id_label, mode, selected){
       if(selected===undefined) selected = true;

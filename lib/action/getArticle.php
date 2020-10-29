@@ -12,10 +12,11 @@ if( !allowFrame($article['link'])
 <html lang="en">
   <head>
     <title><?php echo $article['title']; ?></title>
-    <link rel="stylesheet" href="skins/elastic/styles/styles.css?s=1535618602">
-    <link rel="stylesheet" href="plugins/ttrss/skins/elastic/css/article.css?s=1535544692">
+    <link rel="stylesheet" href="skins/elastic/styles/styles.css?s=<?php echo filemtime(__DIR__.'/../../../../skins/elastic/styles/styles.css'); ?>" />
+    <link rel="stylesheet" href="plugins/ttrss/skins/elastic/css/article.css?s=<?php echo filemtime(__DIR__.'/../../skins/elastic/css/article.css'); ?>" />
+    <script type="text/javascript" src="plugins/ttrss/skins/elastic/js/.article.js?s=<?php echo filemtime(__DIR__.'/../../skins/elastic/js/.article.js'); ?>"></script>
   </head>
-  <body>
+  <body onKeyDown="return article.onKeyDown(event);">
     <h2>
       <a id="rssHeadArticleLink" href="<?php echo $article['link']; ?>" <?php echo $target; ?>>
          <?php echo $article['title']; ?>
